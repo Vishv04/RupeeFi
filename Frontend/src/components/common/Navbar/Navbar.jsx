@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { Button } from '@neo4j-ndl/react';
 
 function Navbar({ isAuthenticated, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -187,12 +188,22 @@ function Navbar({ isAuthenticated, onLogout }) {
                 )}
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-indigo-200 transition-all duration-300 transform hover:translate-y-[-2px] active:translate-y-0"
-              >
-                Get Started
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link to="/login">
+                  <Button variant="filled">Login</Button>
+                </Link>
+                <div className="border-l border-gray-300 h-6" />
+                <div className="flex items-center space-x-2">
+                  <Link to="/merchant/login">
+                    <Button variant="outlined">Merchant Login</Button>
+                  </Link>
+                  <Link to="/merchant/register">
+                    <Button variant="filled" color="success">
+                      Register as Merchant
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -265,12 +276,22 @@ function Navbar({ isAuthenticated, onLogout }) {
                   </button>
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  className="block text-center bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-4 py-2.5 rounded-full hover:shadow-md transition-all duration-300"
-                >
-                  Get Started
-                </Link>
+                <div className="flex items-center space-x-2">
+                  <Link to="/login">
+                    <Button variant="filled">Login</Button>
+                  </Link>
+                  <div className="border-l border-gray-300 h-6" />
+                  <div className="flex items-center space-x-2">
+                    <Link to="/merchant/login">
+                      <Button variant="outlined">Merchant Login</Button>
+                    </Link>
+                    <Link to="/merchant/register">
+                      <Button variant="filled" color="success">
+                        Register as Merchant
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               )}
             </div>
           </div>

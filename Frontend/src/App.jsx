@@ -8,6 +8,9 @@ import Herosection from './components/Home/HeroSection';
 import Profile from './components/profile/Profile';
 
 import MerchantDashboard from './components/Merchant/MerchantDashboard'
+import MerchantLogin from './components/merchant/MerchantLogin';
+import MerchantRegister from './components/merchant/MerchantRegister';
+import MerchantLanding from './components/merchant/MerchantLanding';
 
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
@@ -52,6 +55,9 @@ function App() {
           path="/dashboard" 
           element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
         />
+        <Route path="/merchant" element={<MerchantLanding />} />
+        <Route path="/merchant/login" element={<MerchantLogin />} />
+        <Route path="/merchant/register" element={<MerchantRegister />} />
         <Route 
           path="/profile" 
           element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 

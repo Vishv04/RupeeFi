@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 const PaymentMethodSchema = new mongoose.Schema({
   name: {
@@ -50,6 +50,19 @@ const MerchantSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  gstin: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  bankAccount: {
+    accountNumber: String,
+    ifscCode: String,
+    isVerified: {
+      type: Boolean,
+      default: false
+    }
+  },
   balance: {
     type: Number,
     default: 0
@@ -84,7 +97,11 @@ const MerchantSchema = new mongoose.Schema({
   employees: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Employee'
-  }]
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 }, {
   timestamps: true
 });
@@ -107,6 +124,11 @@ MerchantSchema.pre('save', async function(next) {
 // Compare password method
 MerchantSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to verify password
+MerchantSchema.methods.verifyPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 const Merchant = mongoose.model('Merchant', MerchantSchema);
