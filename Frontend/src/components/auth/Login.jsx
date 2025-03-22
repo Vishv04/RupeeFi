@@ -16,7 +16,7 @@ function Login({ setIsAuthenticated }) {
         name: decoded.name,
         picture: decoded.picture,
         googleId: decoded.sub,
-        token: credentialResponse.credential
+        token: credentialResponse.credential,
       };
 
       const response = await axios.post(

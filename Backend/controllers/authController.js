@@ -13,7 +13,7 @@ const generateToken = (id) => {
 
 export const googleLogin = async (req, res) => {
   try {
-    const { email, name, picture, googleId, token } = req.body;
+    const { email, name, picture, googleId } = req.body;
 
     // Validate required fields
     if (!email || !name || !googleId) {
@@ -48,7 +48,7 @@ export const googleLogin = async (req, res) => {
     // Generate JWT token with MongoDB _id
     const jwtToken = jwt.sign(
       { 
-        _id: user._id, // Include MongoDB _id
+        id: user._id, // Changed from _id to id to match auth middleware
         email,
         name,
         sub: googleId,

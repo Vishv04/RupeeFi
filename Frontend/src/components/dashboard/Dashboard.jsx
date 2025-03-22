@@ -16,7 +16,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setUserData(user);
-      console.log(user);
     }
   }, []);
 
@@ -40,30 +39,14 @@ const Dashboard = ({ setIsAuthenticated }) => {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               {/* User Info Card */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-4">User Information</h3>
                 <div className="space-y-3">
                   <p><span className="font-medium">Name:</span> {userData.name}</p>
                   <p><span className="font-medium">Email:</span> {userData.email}</p>
-                  <p><span className="font-medium">Visit Count:</span> {userData.visitCount}</p>
-                  <p>
-                    <span className="font-medium">Last Visit:</span>{' '}
-                    {userData.lastVisit ? new Date(userData.lastVisit).toLocaleString() : 'N/A'}
-                  </p>
                 </div>
-              </div>
-
-              {/* Quick Actions Card */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Logout
-                </button>
               </div>
             </div>
           </div>
