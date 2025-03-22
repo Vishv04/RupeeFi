@@ -26,7 +26,40 @@ function Login({ setIsAuthenticated }) {
 
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Store user data
+        const user = response.data.user;
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Check if this user is registered as a merchant
+        if (user.isMerchant) {
+          console.log('User is registered as a merchant, attempting to refresh merchant token');
+          
+          try {
+            // Try to refresh the merchant token
+            const merchantResponse = await axios.post(
+              `${import.meta.env.VITE_API_URL}/api/merchant/token-refresh`,
+              { userId: user._id },
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data.token}`
+                }
+              }
+            );
+            
+            if (merchantResponse.data.success && merchantResponse.data.merchantToken) {
+              // Store merchant token and data
+              console.log('Successfully refreshed merchant token');
+              localStorage.setItem('merchantToken', merchantResponse.data.merchantToken);
+              localStorage.setItem('merchant', JSON.stringify(merchantResponse.data.merchant));
+            }
+          } catch (merchantError) {
+            console.error('Error refreshing merchant token:', merchantError);
+            // Even if token refresh fails, we still set isMerchant to true
+            // The Profile component will handle re-authentication if needed
+          }
+        }
+        
         setIsAuthenticated(true);
         window.location.href = '/dashboard';
       } else {
