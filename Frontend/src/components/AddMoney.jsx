@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, TextInput, Typography, Widget } from '@neo4j-ndl/react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -7,6 +8,22 @@ const AddMoney = ({ userId }) => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Handle payment callback
+    const params = new URLSearchParams(location.search);
+    const status = params.get('status');
+    
+    if (status === 'success') {
+      alert('Payment successful! Balance updated.');
+      navigate('/dashboard', { replace: true });
+    } else if (status === 'failed') {
+      setError('Payment failed. Please try again.');
+      navigate('/add-money', { replace: true });
+    }
+  }, [location, navigate]);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -14,46 +31,18 @@ const AddMoney = ({ userId }) => {
     setError('');
 
     try {
-      // Create Razorpay order
-      const orderResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
-        amount: amount * 100, // Convert to paise
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/phonepe`, {
+        amount: parseFloat(amount),
         userId
       });
 
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: amount * 100,
-        currency: "INR",
-        name: "RupeeFi",
-        description: "Add money to UPI account",
-        order_id: orderResponse.data.orderId,
-        handler: async (response) => {
-          try {
-            // Verify payment and update UPI balance
-            const verifyResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/verify`, {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              userId
-            });
-
-            if (verifyResponse.data.success) {
-              setAmount('');
-              alert('Money added successfully to your UPI account!');
-            }
-          } catch (err) {
-            setError('Payment verification failed');
-          }
-        },
-        theme: {
-          color: "#3399cc"
-        }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      if (response.data.success) {
+        window.location.href = response.data.paymentUrl;
+      } else {
+        setError('Failed to initiate payment');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to initiate payment');
+      setError(err.response?.data?.message || 'Failed to process payment');
     } finally {
       setLoading(false);
     }
@@ -72,9 +61,10 @@ const AddMoney = ({ userId }) => {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount"
+            placeholder="Enter amount (₹1 to ₹1000)"
             required
             min="1"
+            max="1000"
             className="w-full"
           />
         </div>
@@ -87,11 +77,11 @@ const AddMoney = ({ userId }) => {
 
         <Button
           type="submit"
-          disabled={loading || !amount}
+          disabled={loading || !amount || amount < 1 || amount > 1000}
           loading={loading}
           className="w-full"
         >
-          {loading ? 'Processing...' : 'Add Money via Razorpay'}
+          {loading ? 'Processing...' : 'Pay with PhonePe'}
         </Button>
       </form>
     </Widget>
