@@ -1,0 +1,46 @@
+/* Add to existing styles */
+
+.chat-window-enter {
+  opacity: 0;
+  transform: translateY(100px) scale(0.95);
+}
+
+.chat-window-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.chat-window-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.chat-window-exit-active {
+  opacity: 0;
+  transform: translateY(100px) scale(0.95);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Custom scrollbar for chat messages */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth shadow for chat button */
+.chat-button-shadow {
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+} 
