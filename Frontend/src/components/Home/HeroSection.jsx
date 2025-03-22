@@ -31,6 +31,13 @@ export default function Herosection() {
         <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-gradient-to-tr from-[#1e2cc8]/5 to-[#15229c]/5 blur-3xl" />
         <div className="absolute top-40 right-0 w-40 h-[500px] rounded-l-full bg-gradient-to-b from-[#888feb]/3 to-[#4552e3]/3" />
       </div>
+
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
       
       {/* Left indicator line like in original but with fintech colors */}
       <div className="absolute inset-y-0 left-0 h-full w-px bg-[#888feb]/20">
@@ -116,12 +123,9 @@ export default function Herosection() {
           }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <Link to="/signup" className="group flex items-center justify-center w-64 transform rounded-full bg-gradient-to-r from-[#15229c] to-[#4552e3] px-6 py-3 font-medium text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#4552e3]/20 hover:-translate-y-0.5">
+          <Link to="/login" className="group flex items-center justify-center w-64 transform rounded-full bg-gradient-to-r from-[#15229c] to-[#4552e3] px-6 py-3 font-medium text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#4552e3]/20 hover:-translate-y-0.5">
             Get Started
             <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-          <Link to="/demo" className="group flex items-center justify-center w-64 transform rounded-full border border-[#4552e3]/20 bg-white px-6 py-3 font-medium text-[#1e2cc8] transition-all duration-300 hover:border-[#4552e3] hover:shadow-md hover:-translate-y-0.5">
-            Watch Demo
           </Link>
         </motion.div>
 
