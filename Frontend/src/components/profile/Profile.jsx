@@ -251,8 +251,8 @@ const Profile = ({ setIsAuthenticated }) => {
   
   // Function to handle merchant registration tab
   const handleMerchantRegistration = () => {
-    setActiveTab('merchant-registration');
-    navigate('/profile?tab=merchant-registration');
+    // setActiveTab('merchant-registration');
+    navigate('/merchant/register');
   };
   
   // Function to handle merchant registration form input
