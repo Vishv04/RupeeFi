@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaStore } from 'react-icons/fa';
 
@@ -21,7 +21,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
   useEffect(() => {
     // Fetch user data from localStorage or API
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setUserData({
         ...user,
