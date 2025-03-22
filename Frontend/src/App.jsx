@@ -10,10 +10,12 @@ import Profile from './components/profile/Profile';
 import MerchantDashboard from './components/Merchant/MerchantDashboard'
 
 // NavbarWrapper component to conditionally render navbar
-const NavbarWrapper = () => {
+const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
   // Don't render navbar on merchant page
-  return location.pathname !== '/merchant' ? <Navbar /> : null;
+  return location.pathname !== '/merchant' ? (
+    <Navbar isAuthenticated={isAuthenticated} onLogout={onLogout} />
+  ) : null;
 };
 
 function App() {
@@ -21,6 +23,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
     window.location.href = '/';
   };
