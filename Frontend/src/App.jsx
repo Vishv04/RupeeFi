@@ -10,7 +10,12 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
+        <Route 
+          path="/home" 
+          element={<Herosection />} 
+        />
         <Route 
           path="/" 
           element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
@@ -19,6 +24,7 @@ function App() {
           path="/dashboard" 
           element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} 
         />
+        
       </Routes>
     </Router>
   );
