@@ -1,8 +1,8 @@
 {
-  "name": "rupeefi",
-  "version": "1.0.0",
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "index.js",
+  "name": "hack",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,12 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@neo4j-ndl/react": "^3.3.22",
-    "@neo4j-nvl/react": "^0.3.8",
     "@react-oauth/google": "^0.12.1",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.4",
-    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.14"
