@@ -1,17 +1,15 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import * as jwt_decode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 
 function Login() {
-  const navigate = useNavigate();
   const [error, setError] = React.useState('');
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const decoded = jwt_decode.jwtDecode(credentialResponse.credential);
+      const decoded = jwtDecode(credentialResponse.credential);
 
       const userData = {
         email: decoded.email,
@@ -26,14 +24,16 @@ function Login() {
         userData
       );
 
-      if (response.data.success) {
+      if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        navigate('/dashboard');
+        window.location.href = '/dashboard';
+      } else {
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
       console.error('Google login error:', error.response?.data || error.message);
-      setError('Failed to login with Google. Please try again.');
+      setError(error.response?.data?.message || 'Failed to login with Google. Please try again.');
     }
   };
 
