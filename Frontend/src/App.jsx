@@ -5,6 +5,7 @@ import { useState } from 'react';
 import './App.css';
 import { Navbar } from './components/common/Navbar/Navbar';
 import Herosection from './components/Home/HeroSection';
+import Profile from './components/profile/Profile';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -34,6 +35,10 @@ function App() {
         <Route 
           path="/dashboard" 
           element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/profile" 
+          element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
         />
       </Routes>
     </Router>

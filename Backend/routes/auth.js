@@ -22,9 +22,17 @@ router.post('/google-login', async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE
-    });
+    const token = jwt.sign(
+      { 
+        id: user._id,
+        email: user.email,
+        name: user.name
+      }, 
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRE || '7d'
+      }
+    );
 
     res.json({
       success: true,
@@ -33,9 +41,7 @@ router.post('/google-login', async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        picture: user.picture,
-        upiBalance: user.upiBalance,
-        eRupeeBalance: user.eRupeeBalance
+        picture: user.picture
       }
     });
   } catch (error) {
