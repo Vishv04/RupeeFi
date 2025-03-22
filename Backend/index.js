@@ -1,17 +1,17 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import dbConnect from './config/database.js';
-import { cloudinaryConnect } from './config/cloudinary.js';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import dbConnect from "./config/database.js";
+import { cloudinaryConnect } from "./config/cloudinary.js";
 
 // Import routes
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/user.js';
-import paymentRoutes from './routes/payment.js';
-import merchantRoutes from './routes/merchant.js';
-import rewardsRoutes from './routes/rewards.js';
-import walletRoutes from './routes/wallet.js';
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
+import paymentRoutes from "./routes/payment.js";
+import merchantRoutes from "./routes/merchant.js";
+import rewardsRoutes from "./routes/rewards.js";
+import walletRoutes from "./routes/wallet.js";
 
 // Configure env
 dotenv.config();
@@ -29,20 +29,28 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  next();
+});
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+
   next();
 });
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/merchant', merchantRoutes);
-app.use('/api/rewards', rewardsRoutes);
-app.use('/api/wallet', walletRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/merchant", merchantRoutes);
+app.use("/api/rewards", rewardsRoutes);
+app.use("/api/wallet", walletRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   const status = err.status || 500;
-  const message = err.message || 'Something went wrong';
+  const message = err.message || "Something went wrong";
   res.status(status).json({
     success: false,
     status,
@@ -50,12 +58,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.get("/" , (req,res) => {
-    return res.json({
-        success: true,
-        message: "Boooooooooom, your server is started"
-    })
-})
+app.get("/", (req, res) => {
+  return res.json({
+    success: true,
+    message: "Boooooooooom, your server is started",
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
