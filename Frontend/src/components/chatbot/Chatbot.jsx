@@ -1,6 +1,7 @@
 /* eslint-disable no-confusing-arrow */
 import { useEffect, useRef, useState } from 'react';
-import { Button, Widget, Typography, Avatar, TextInput } from '@neo4j-ndl/react';
+// Remove neo4j-ndl components import
+// import { Button, Widget, Typography, Avatar, TextInput } from '@neo4j-ndl/react';
 import PropTypes from 'prop-types';
 
 import ChatBotUserAvatar from '../assets/chatbot-user.png';
@@ -99,28 +100,27 @@ export default function Chatbot(props) {
   }, [listMessages, isWaitingForResponse]);
 
   return (
-    <div className="n-bg-palette-neutral-bg-default flex flex-col justify-between min-h-screen max-h-full overflow-hidden">
+    <div className="bg-white flex flex-col justify-between min-h-screen max-h-full overflow-hidden">
       {/* Chat messages */}
       <div className="flex overflow-y-auto pb-12 min-w-full">
-        <Widget className="n-bg-palette-neutral-bg-default w-full h-full" header="RupeeSpin Help Bot" isElevated={false}>
+        <div className="bg-white w-full h-full shadow-md rounded-lg">
+          <div className="p-3 border-b border-gray-200 font-medium">RupeeSpin Help Bot</div>
           <div className="flex flex-col gap-3 p-3">
             {listMessages.length === 0 && (
               <div className="flex gap-2.5 items-end">
-                <Avatar
-                  className="-ml-4"
-                  hasStatus
-                  name="RS"
-                  shape="square"
-                  size="x-large"
-                  source={ChatBotAvatar}
-                  status="online"
-                  type="image"
-                />
-                <Widget className="p-4 self-start max-w-[55%] n-bg-palette-neutral-bg-weak">
-                  <Typography variant="body-medium">
+                <div className="-ml-4 relative">
+                  <img 
+                    src={ChatBotAvatar} 
+                    alt="Chatbot" 
+                    className="w-10 h-10 rounded-md"
+                  />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                </div>
+                <div className="p-4 self-start max-w-[55%] bg-gray-100 rounded-lg">
+                  <p className="text-base font-medium">
                     Hi! I'm the RupeeSpin Help Bot. Ask me about e-Rupee, payments, rewards, or merchant setup—try "How do I use RupeeSpin?"
-                  </Typography>
-                </Widget>
+                  </p>
+                </div>
               </div>
             )}
             {listMessages.map((chat) => (
@@ -128,36 +128,30 @@ export default function Chatbot(props) {
                 key={chat.id}
                 className={`flex gap-2.5 items-end ${chat.user === 'chatbot' ? 'flex-row' : 'flex-row-reverse'}`}
               >
-                <div className="w-8 h-8">
+                <div className="w-8 h-8 relative">
                   {chat.user === 'chatbot' ? (
-                    <Avatar
-                      className="-ml-4"
-                      hasStatus
-                      name="RS"
-                      shape="square"
-                      size="x-large"
-                      source={ChatBotAvatar}
-                      status="online"
-                      type="image"
-                    />
+                    <div className="-ml-4 relative">
+                      <img 
+                        src={ChatBotAvatar} 
+                        alt="Chatbot" 
+                        className="w-10 h-10 rounded-md"
+                      />
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
                   ) : (
-                    <Avatar
-                      className=""
-                      hasStatus
-                      name="User"
-                      shape="square"
-                      size="x-large"
-                      source={ChatBotUserAvatar}
-                      status="online"
-                      type="image"
-                    />
+                    <div className="relative">
+                      <img 
+                        src={ChatBotUserAvatar} 
+                        alt="User" 
+                        className="w-10 h-10 rounded-md"
+                      />
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
                   )}
                 </div>
-                <Widget
-                  header=""
-                  isElevated={true}
-                  className={`p-4 self-start max-w-[55%] ${
-                    chat.user === 'chatbot' ? 'n-bg-palette-neutral-bg-weak' : 'n-bg-palette-primary-bg-weak'
+                <div
+                  className={`p-4 self-start max-w-[55%] rounded-lg shadow-sm ${
+                    chat.user === 'chatbot' ? 'bg-gray-100' : 'bg-blue-100'
                   }`}
                 >
                   <div>
@@ -172,48 +166,49 @@ export default function Chatbot(props) {
                     )}
                   </div>
                   <div className="text-right align-bottom pt-3">
-                    <Typography variant="body-small">{chat.datetime}</Typography>
+                    <p className="text-xs text-gray-500">{chat.datetime}</p>
                   </div>
-                </Widget>
+                </div>
               </div>
             ))}
             {/* Typing indicator */}
             {isWaitingForResponse && (
               <div className="flex gap-2.5 items-end">
-                <Avatar
-                  className="-ml-4"
-                  hasStatus
-                  name="RS"
-                  shape="square"
-                  size="x-large"
-                  source={ChatBotAvatar}
-                  status="online"
-                  type="image"
-                />
-                <Widget className="p-4 self-start max-w-[55%] n-bg-palette-neutral-bg-weak">
-                  <Typography variant="body-medium">RupeeSpin Bot is typing...</Typography>
-                </Widget>
+                <div className="-ml-4 relative">
+                  <img 
+                    src={ChatBotAvatar} 
+                    alt="Chatbot" 
+                    className="w-10 h-10 rounded-md"
+                  />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                </div>
+                <div className="p-4 self-start max-w-[55%] bg-gray-100 rounded-lg">
+                  <p className="text-base font-medium">RupeeSpin Bot is typing...</p>
+                </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
-        </Widget>
+        </div>
       </div>
 
       {/* Input form */}
-      <div className="n-bg-palette-neutral-bg-default flex gap-2.5 bottom-0 p-2.5 w-full">
+      <div className="bg-white flex gap-2.5 bottom-0 p-2.5 w-full border-t border-gray-200">
         <form onSubmit={handleSubmit} className="flex gap-2.5 w-full">
-          <TextInput
-            className="n-bg-palette-neutral-bg-default flex-grow-7 w-full"
+          <input
+            className="bg-white flex-grow-7 w-full border border-gray-300 rounded-md px-3 py-2"
             type="text"
             value={inputMessage}
-            fluid
             placeholder="Ask about e-Rupee or RupeeSpin..."
             onChange={handleInputChange}
           />
-          <Button type="submit" disabled={isWaitingForResponse}>
+          <button 
+            type="submit" 
+            disabled={isWaitingForResponse}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+          >
             Send
-          </Button>
+          </button>
         </form>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, TextInput, Typography, Widget } from '@neo4j-ndl/react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
@@ -49,15 +48,15 @@ const AddMoney = ({ userId }) => {
   };
 
   return (
-    <Widget className="p-4">
-      <Typography variant="h4" className="mb-4">
+    <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">
         Add Money to UPI Account
-      </Typography>
+      </h2>
 
       <form onSubmit={handlePayment}>
         <div className="mb-4">
-          <TextInput
-            label="Amount (₹)"
+          <label className="block text-sm font-medium text-gray-700 mb-1">Amount (₹)</label>
+          <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -65,26 +64,29 @@ const AddMoney = ({ userId }) => {
             required
             min="1"
             max="1000"
-            className="w-full"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {error && (
-          <Typography variant="body2" className="text-red-500 mb-3">
+          <p className="text-red-500 text-sm mb-3">
             {error}
-          </Typography>
+          </p>
         )}
 
-        <Button
+        <button
           type="submit"
           disabled={loading || !amount || amount < 1 || amount > 1000}
-          loading={loading}
-          className="w-full"
+          className={`w-full py-2 px-4 rounded-md text-white ${
+            loading || !amount || amount < 1 || amount > 1000
+              ? 'bg-blue-300 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700'
+          } transition-colors`}
         >
           {loading ? 'Processing...' : 'Pay with PhonePe'}
-        </Button>
+        </button>
       </form>
-    </Widget>
+    </div>
   );
 };
 

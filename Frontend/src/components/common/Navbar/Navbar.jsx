@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { Button } from '@neo4j-ndl/react';
 
 function Navbar({ isAuthenticated, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -190,17 +189,17 @@ function Navbar({ isAuthenticated, onLogout }) {
             ) : (
               <div className="flex items-center space-x-2">
                 <Link to="/login">
-                  <Button variant="filled">Login</Button>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Login</button>
                 </Link>
                 <div className="border-l border-gray-300 h-6" />
                 <div className="flex items-center space-x-2">
                   <Link to="/merchant/login">
-                    <Button variant="outlined">Merchant Login</Button>
+                    <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors">Merchant Login</button>
                   </Link>
                   <Link to="/merchant/register">
-                    <Button variant="filled" color="success">
+                    <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
                       Register as Merchant
-                    </Button>
+                    </button>
                   </Link>
                 </div>
               </div>
@@ -278,17 +277,17 @@ function Navbar({ isAuthenticated, onLogout }) {
               ) : (
                 <div className="flex items-center space-x-2">
                   <Link to="/login">
-                    <Button variant="filled">Login</Button>
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Login</button>
                   </Link>
                   <div className="border-l border-gray-300 h-6" />
                   <div className="flex items-center space-x-2">
                     <Link to="/merchant/login">
-                      <Button variant="outlined">Merchant Login</Button>
+                      <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors">Merchant Login</button>
                     </Link>
                     <Link to="/merchant/register">
-                      <Button variant="filled" color="success">
+                      <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
                         Register as Merchant
-                      </Button>
+                      </button>
                     </Link>
                   </div>
                 </div>
