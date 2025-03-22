@@ -8,6 +8,7 @@ import { cloudinaryConnect } from './config/cloudinary.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import paymentRoutes from './routes/payment.js';
 
 // Configure env
 dotenv.config();
@@ -36,6 +37,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
