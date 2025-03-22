@@ -185,7 +185,7 @@ npm run dev
 ## Acknowledgments
 
 - Google OAuth for authentication
-- PhonePe for payment processing
+- RazorPay for payment processing
 - Google Gemini AI for chatbot
 - MongoDB for database
 - Express.js for backend
