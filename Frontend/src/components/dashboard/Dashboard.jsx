@@ -105,7 +105,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
               </div>
               
               {/* Merchant Notice - Only show if user is a merchant */}
-              {userData.isMerchant && (
+              {/* {userData.isMerchant && (
                 <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -120,29 +120,11 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     </Link>
                   </div>
                 </div>
-              )}
-              
-              {/* Merchant Registration - Only show if user is NOT a merchant */}
-              {!userData.isMerchant && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-green-700 mb-2">Become a Merchant</h3>
-                      <p className="text-green-600">Register as a merchant to accept payments, track transactions, and access merchant-specific features.</p>
-                    </div>
-                    <Link 
-                      to="/profile?tab=merchant-registration" 
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
-                    >
-                      <FaStore className="mr-2" /> Register as Merchant
-                    </Link>
-                  </div>
-                </div>
-              )}
+              )} */}
             </div>
 
             {/* eRupee Wallet Card */}
-            <div className="bg-white rounded-lg shadow p-6">
+            {/* <div className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold">eRupee Wallet</h3>
                 <Link 
@@ -154,10 +136,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
               </div>
               <div className="text-3xl font-bold text-gray-900">
                 ₹{walletData.eRupeeWallet.balance.toFixed(2)}
-              </div>
+              </div> */}
               
               {/* Merchant Notice - Only show if user is a merchant */}
-              {userData.isMerchant && (
+              {/* {userData.isMerchant && (
                 <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -172,10 +154,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     </Link>
                   </div>
                 </div>
-              )}
+              )} */}
               
               {/* Merchant Registration - Only show if user is NOT a merchant */}
-              {!userData.isMerchant && (
+              {/* {!userData.isMerchant && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -190,8 +172,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     </Link>
                   </div>
                 </div>
-              )}
-            </div>
+              )} */}
+            {/* </div> */}
           </div>
         </div>
       </main>
