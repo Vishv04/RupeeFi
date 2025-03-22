@@ -4,7 +4,7 @@ import Merchant from '../models/merchant.js';
 
 export const protect = async (req, res, next) => {
   try {
-    console.log(req.headers);
+    // console.log(req.headers);
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];

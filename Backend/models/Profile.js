@@ -13,6 +13,14 @@ const profileSchema = new mongoose.Schema({
     erupeeId: {
         type: String,
     },
+    upiWalletId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UpiWallet'
+    },
+    eRupeeWalletId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ERupeeWallet'
+    },
     referralCount: {
         type: Number,
         default: 0,

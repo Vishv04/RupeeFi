@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import paymentRoutes from './routes/payment.js';
 import merchantRoutes from './routes/merchant.js';
+import walletRoutes from './routes/wallet.js';
 
 // Configure env
 dotenv.config();
@@ -35,7 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/merchant', merchantRoutes);
-
+app.use('/api/wallet', walletRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   const status = err.status || 500;

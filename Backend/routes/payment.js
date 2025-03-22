@@ -1,188 +1,124 @@
 import express from 'express';
+import Razorpay from 'razorpay';
 import crypto from 'crypto';
-import auth from '../middleware/auth.js';
-import User from '../models/User.js';
+import { protect } from '../middleware/auth.js';
+import Profile from '../models/Profile.js';
+import UpiWallet from '../models/upiWallet.js';
+import Wallet from '../models/wallet.js';
 
 const router = express.Router();
 
-// PhonePe Sandbox API configs
-const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
-const SALT_KEY = process.env.PHONEPE_SALT_KEY;
-const SALT_INDEX = process.env.PHONEPE_SALT_INDEX;
-const API_URL = 'https://api-preprod.phonepe.com/apis/pg-sandbox';
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
-// Create PhonePe payment request
-router.post('/phonepe', auth, async (req, res) => {
+// Create Razorpay order
+router.post('/create-order', protect, async (req, res) => {
   try {
-    const { amount, userId } = req.body;
+    const { amount } = req.body;
+    const options = {
+      amount,
+      currency: "INR",
+      receipt: `rcpt_${Date.now()}`
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (error) {
+    console.error('Create order error:', error);
+    res.status(500).json({ message: 'Failed to create order' });
+  }
+});
+
+// Verify payment and update wallet
+router.post('/verify', protect, async (req, res) => {
+  try {
+    const { userId, amount, walletType } = req.body;
+    const profile = await Profile.findOne({ user: userId });
+    const wallet = await Wallet.findById(profile.walletId);
     
-    // Validate amount limits (₹1 to ₹1000 for testing)
-    if (amount < 1 || amount > 1000) {
-      return res.status(400).json({ 
-        message: 'Amount should be between ₹1 and ₹1000 for testing' 
-      });
-    }
-
-    const transactionId = `TXN_${Date.now()}_${userId}`;
-
-    const payload = {
-      merchantId: MERCHANT_ID,
-      merchantTransactionId: transactionId,
-      merchantUserId: userId,
-      amount: amount * 100,
-      redirectUrl: `${process.env.FRONTEND_URL}/payment/callback`,
-      redirectMode: 'POST',
-      callbackUrl: `${process.env.BACKEND_URL}/api/payment/callback`,
-      paymentInstrument: {
-        type: 'PAY_PAGE'
-      }
-    };
-
-    const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
-    const message = base64Payload + '/pg/v1/pay' + SALT_KEY;
-    const sha256 = crypto.createHash('sha256').update(message).digest('hex');
-    const checksum = sha256 + '###' + SALT_INDEX;
-
-    const response = await fetch(`${API_URL}/pg/v1/pay`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-VERIFY': checksum
-      },
-      body: JSON.stringify({
-        request: base64Payload
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      res.json({
-        success: true,
-        paymentUrl: data.data.instrumentResponse.redirectInfo.url
-      });
-    } else {
-      res.status(400).json({ 
-        message: data.message || 'Failed to create payment' 
-      });
-    }
-  } catch (error) {
-    console.error('Payment error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Handle PhonePe callback
-router.post('/callback', async (req, res) => {
-  try {
-    const { merchantTransactionId, code, amount } = req.body;
-
-    if (code === 'PAYMENT_SUCCESS') {
-      const userId = merchantTransactionId.split('_')[2];
-      const user = await User.findById(userId);
+    if (process.env.NODE_ENV === 'development') {
+      const amountInRupees = parseFloat(amount) / 100;
       
-      if (user) {
-        user.upiBalance += amount / 100;
-        await user.save();
+      if (walletType === 'upi') {
+        wallet.upiBalance += amountInRupees;
+        wallet.upiTransactions.push({
+          amount: amountInRupees,
+          type: 'credit',
+          from: 'Razorpay',
+          to: 'Wallet',
+          description: 'Added money via Razorpay (Test)',
+          timestamp: new Date()
+        });
+      } else {
+        wallet.eRupeeBalance += amountInRupees;
+        wallet.eRupeeTransactions.push({
+          txHash: `TX_${Date.now()}`,
+          amount: amountInRupees,
+          type: 'credit',
+          from: 'Razorpay',
+          to: 'Wallet',
+          note: 'Added money via Razorpay (Test)',
+          timestamp: new Date()
+        });
       }
+      
+      await wallet.save();
+      return res.json({ message: 'Test payment successful' });
+    }
 
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard?status=success`);
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest('hex');
+
+    if (digest !== razorpay_signature) {
+      return res.status(400).json({ message: 'Transaction not legit!' });
+    }
+
+    // Get payment details
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    const amountInRupees = payment.amount / 100;
+
+    // Add transaction and update balance
+    if (walletType === 'upi') {
+      wallet.upiBalance += amountInRupees;
+      wallet.upiTransactions.push({
+        amount: amountInRupees,
+        type: 'credit',
+        from: 'Razorpay',
+        to: 'Wallet',
+        description: 'Added money via Razorpay',
+        timestamp: new Date()
+      });
     } else {
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard?status=failed&code=${code}`);
-    }
-  } catch (error) {
-    console.error('Callback error:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?status=error`);
-  }
-});
-
-// Link bank account
-router.post('/link-account', auth, async (req, res) => {
-  try {
-    const { accountNumber, ifscCode } = req.body;
-    const user = await User.findById(req.user.userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      wallet.eRupeeBalance += amountInRupees;
+      wallet.eRupeeTransactions.push({
+        txHash: `TX_${Date.now()}`,
+        amount: amountInRupees,
+        type: 'credit',
+        from: 'Razorpay',
+        to: 'Wallet',
+        note: 'Added money via Razorpay',
+        timestamp: new Date()
+      });
     }
 
-    // Store bank details
-    user.bankAccount = {
-      accountNumber,
-      ifscCode,
-      isVerified: false
-    };
-    await user.save();
+    await wallet.save();
 
-    // Generate link request
-    const transactionId = `LINK_${Date.now()}_${user._id}`;
-    const payload = {
-      merchantId: MERCHANT_ID,
-      merchantTransactionId: transactionId,
-      merchantUserId: user._id,
-      callbackUrl: `${process.env.BACKEND_URL}/api/payment/link-callback`,
-      redirectUrl: `${process.env.FRONTEND_URL}/payment/link-callback`,
-      redirectMode: 'POST',
-      bankAccount: {
-        accountNumber,
-        ifscCode
-      },
-      paymentInstrument: {
-        type: 'BANK_ACCOUNT'
-      }
-    };
-
-    const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
-    const message = base64Payload + '/pg/v1/link' + SALT_KEY;
-    const sha256 = crypto.createHash('sha256').update(message).digest('hex');
-    const checksum = sha256 + '###' + SALT_INDEX;
-
-    const response = await fetch(`${API_URL}/pg/v1/link`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-VERIFY': checksum
-      },
-      body: JSON.stringify({
-        request: base64Payload
-      })
+    res.json({ 
+      message: 'Payment verified successfully',
+      balance: wallet.upiBalance + wallet.eRupeeBalance 
     });
-
-    const data = await response.json();
-
-    if (data.success) {
-      res.json({
-        success: true,
-        linkUrl: data.data.instrumentResponse.redirectInfo.url
-      });
-    } else {
-      res.status(400).json({
-        message: data.message || 'Failed to link account'
-      });
-    }
   } catch (error) {
-    console.error('Account linking error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Handle account linking callback
-router.post('/link-callback', async (req, res) => {
-  try {
-    const { merchantTransactionId, code } = req.body;
-    const userId = merchantTransactionId.split('_')[2];
-    const user = await User.findById(userId);
-
-    if (user && code === 'LINK_SUCCESS') {
-      user.bankAccount.isVerified = true;
-      await user.save();
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=success`);
-    } else {
-      res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=failed&code=${code}`);
-    }
-  } catch (error) {
-    console.error('Link callback error:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=error`);
+    console.error('Payment verification error:', error);
+    res.status(500).json({ message: 'Payment verification failed' });
   }
 });
 
