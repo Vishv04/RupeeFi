@@ -14,8 +14,11 @@
     "@react-oauth/google": "^0.12.1",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.4",
+    "framer-motion": "^12.5.0",
+    "lucide-react": "^0.483.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.4.0",
     "recharts": "^2.15.1",
     "tailwindcss": "^4.0.14"
   },
