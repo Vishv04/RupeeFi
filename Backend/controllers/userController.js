@@ -1,6 +1,6 @@
-const User = require('../models/User');
+import User from '../models/User.js';
 
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     res.status(200).json({
@@ -15,7 +15,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   try {
     const { name } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -36,7 +36,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.deleteProfile = async (req, res) => {
+export const deleteProfile = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.user._id);
     res.status(200).json({
@@ -50,3 +50,5 @@ exports.deleteProfile = async (req, res) => {
     });
   }
 }; 
+
+export default { getProfile, updateProfile, deleteProfile };

@@ -1,10 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { register, verifyEmail, login, googleLogin } = require('../controllers/authController');
+import { googleLogin } from '../controllers/authController.js';
 
-router.post('/register', register);
-router.post('/verify-email', verifyEmail);
-router.post('/login', login);
 router.post('/google-login', googleLogin);
 
-module.exports = router; 
+export default router; 

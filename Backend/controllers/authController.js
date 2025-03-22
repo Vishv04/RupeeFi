@@ -1,7 +1,5 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const { sendVerificationEmail } = require('../utils/emailService');
-const fetch = require('node-fetch');
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -13,188 +11,71 @@ const generateToken = (id) => {
   });
 };
 
-exports.register = async (req, res) => {
+export const googleLogin = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, name, picture, googleId, token } = req.body;
 
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists'
+    // Validate required fields
+    if (!email || !name || !googleId) {
+      return res.status(400).json({ 
+        message: 'Missing required fields',
+        received: { email, name, googleId }
       });
     }
 
-    // Generate OTP
-    const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    // Find or create user
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      user = await User.create({
+        email,
+        name,
+        picture,
+        googleId,
+        visitCount: 1,
+        lastVisit: new Date()
+      });
+    } else {
+      // Update existing user's info and increment visit count
+      user.name = name;
+      user.picture = picture;
+      user.googleId = googleId;
+      user.visitCount += 1;
+      user.lastVisit = new Date();
+      await user.save();
+    }
 
-    // Create user
-    user = await User.create({
-      name,
-      email,
-      password,
-      otp: {
-        code: otp,
-        expiry: otpExpiry
+    // Generate JWT token with MongoDB _id
+    const jwtToken = jwt.sign(
+      { 
+        _id: user._id, // Include MongoDB _id
+        email,
+        name,
+        sub: googleId,
+        picture
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token: jwtToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+        visitCount: user.visitCount,
+        lastVisit: user.lastVisit
       }
     });
-
-    // Send verification email
-    const emailSent = await sendVerificationEmail(email, otp);
-    if (!emailSent) {
-      return res.status(500).json({
-        success: false,
-        message: 'Error sending verification email'
-      });
-    }
-
-    res.status(201).json({
-      success: true,
-      message: 'Registration successful. Please check your email for verification code.'
-    });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
+    console.error('Google login error:', error);
+    res.status(500).json({ 
+      message: 'Error processing login',
+      error: error.message 
     });
   }
 };
 
-exports.verifyEmail = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    if (user.isVerified) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email already verified'
-      });
-    }
-
-    if (user.otp.code !== otp || user.otp.expiry < Date.now()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired OTP'
-      });
-    }
-
-    user.isVerified = true;
-    user.otp = undefined;
-    await user.save();
-
-    const token = generateToken(user._id);
-
-    res.status(200).json({
-      success: true,
-      message: 'Email verified successfully',
-      token
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
-    }
-
-    if (!user.isVerified) {
-      return res.status(401).json({
-        success: false,
-        message: 'Please verify your email first'
-      });
-    }
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
-    }
-
-    // Update visit count
-    user.visitCount += 1;
-    user.lastVisit = Date.now();
-    await user.save();
-
-    const token = generateToken(user._id);
-
-    res.status(200).json({
-      success: true,
-      token
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-exports.googleLogin = async (req, res) => {
-  try {
-    const { tokenId } = req.body;
-    
-    // Verify token with Google OAuth
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${tokenId}`);
-    const data = await response.json();
-    
-    if (!data.email_verified) {
-      return res.status(400).json({
-        success: false,
-        message: 'Google email not verified'
-      });
-    }
-
-    let user = await User.findOne({ email: data.email });
-
-    if (!user) {
-      // Create new user if doesn't exist
-      user = await User.create({
-        name: data.name,
-        email: data.email,
-        googleId: data.sub,
-        isVerified: true
-      });
-    }
-
-    // Update visit count
-    user.visitCount += 1;
-    user.lastVisit = Date.now();
-    await user.save();
-
-    const token = generateToken(user._id);
-
-    res.status(200).json({
-      success: true,
-      token
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-}; 
+export default { googleLogin };

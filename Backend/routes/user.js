@@ -1,11 +1,11 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { protect } = require('../middleware/auth');
-const {
+import { protect } from '../middleware/auth.js';
+import {
   getProfile,
   updateProfile,
   deleteProfile
-} = require('../controllers/userController');
+} from '../controllers/userController.js';
 
 router.use(protect); // Protect all routes
 
@@ -13,4 +13,4 @@ router.get('/profile', getProfile);
 router.put('/profile', updateProfile);
 router.delete('/profile', deleteProfile);
 
-module.exports = router; 
+export default router; 
