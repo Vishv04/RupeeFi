@@ -7,7 +7,7 @@ const RewardsPage = () => {
   const [activeReward, setActiveReward] = useState('spin');
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pt-32">
       <h1 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
         Win Exciting Rewards!
       </h1>
