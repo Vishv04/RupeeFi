@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Link } from 'react-router-dom';
 import axios from 'axios';
+import { FaStore } from 'react-icons/fa';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -13,12 +14,19 @@ const Dashboard = ({ setIsAuthenticated }) => {
     name: 'User',
     email: '',
     visitCount: 0,
-    lastVisit: null
+    lastVisit: null,
+    isMerchant: false
   });
 
   useEffect(() => {
+    // Fetch user data from localStorage or API
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
+      setUserData({
+        ...user,
+        isMerchant: user.isMerchant || false
+      });
       setUserData(user);
       fetchWalletBalances(user._id);
     }
@@ -46,6 +54,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const confirmLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('merchantToken');
+    localStorage.removeItem('merchant');
     setIsAuthenticated(false);
     navigate('/');
   };
@@ -94,6 +104,94 @@ const Dashboard = ({ setIsAuthenticated }) => {
               <div className="text-3xl font-bold text-gray-900">
                 ₹{walletData.eRupeeWallet.balance.toFixed(2)}
               </div>
+              
+              {/* Merchant Notice - Only show if user is a merchant */}
+              {userData.isMerchant && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-indigo-700 mb-2">You are a registered merchant</h3>
+                      <p className="text-indigo-600">You can access your merchant dashboard to view transactions, manage payment methods, and access merchant-specific features.</p>
+                    </div>
+                    <Link 
+                      to="/merchant" 
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
+                    >
+                      <FaStore className="mr-2" /> Merchant Dashboard
+                    </Link>
+                  </div>
+                </div>
+              )}
+              
+              {/* Merchant Registration - Only show if user is NOT a merchant */}
+              {!userData.isMerchant && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-green-700 mb-2">Become a Merchant</h3>
+                      <p className="text-green-600">Register as a merchant to accept payments, track transactions, and access merchant-specific features.</p>
+                    </div>
+                    <Link 
+                      to="/profile?tab=merchant-registration" 
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                    >
+                      <FaStore className="mr-2" /> Register as Merchant
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* eRupee Wallet Card */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">eRupee Wallet</h3>
+                <Link 
+                  to={`/wallet/erupee/${userData._id}`}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  More Details →
+                </Link>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">
+                ₹{walletData.eRupeeWallet.balance.toFixed(2)}
+              </div>
+              
+              {/* Merchant Notice - Only show if user is a merchant */}
+              {userData.isMerchant && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-indigo-700 mb-2">You are a registered merchant</h3>
+                      <p className="text-indigo-600">You can access your merchant dashboard to view transactions, manage payment methods, and access merchant-specific features.</p>
+                    </div>
+                    <Link 
+                      to="/merchant" 
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
+                    >
+                      <FaStore className="mr-2" /> Merchant Dashboard
+                    </Link>
+                  </div>
+                </div>
+              )}
+              
+              {/* Merchant Registration - Only show if user is NOT a merchant */}
+              {!userData.isMerchant && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-green-700 mb-2">Become a Merchant</h3>
+                      <p className="text-green-600">Register as a merchant to accept payments, track transactions, and access merchant-specific features.</p>
+                    </div>
+                    <Link 
+                      to="/profile?tab=merchant-registration" 
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                    >
+                      <FaStore className="mr-2" /> Register as Merchant
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

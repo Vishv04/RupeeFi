@@ -190,21 +190,10 @@ function Navbar({ isAuthenticated, onLogout }) {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center">
                 <Link to="/login">
                   <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Login</button>
                 </Link>
-                <div className="border-l border-gray-300 h-6" />
-                <div className="flex items-center space-x-2">
-                  <Link to="/merchant/login">
-                    <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors">Merchant Login</button>
-                  </Link>
-                  <Link to="/merchant/register">
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-                      Register as Merchant
-                    </button>
-                  </Link>
-                </div>
               </div>
             )}
           </div>
@@ -281,21 +270,10 @@ function Navbar({ isAuthenticated, onLogout }) {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col space-y-2">
                   <Link to="/login">
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Login</button>
+                    <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Login</button>
                   </Link>
-                  <div className="border-l border-gray-300 h-6" />
-                  <div className="flex items-center space-x-2">
-                    <Link to="/merchant/login">
-                      <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors">Merchant Login</button>
-                    </Link>
-                    <Link to="/merchant/register">
-                      <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-                        Register as Merchant
-                      </button>
-                    </Link>
-                  </div>
                 </div>
               )}
             </div>
