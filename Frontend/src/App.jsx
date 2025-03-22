@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import { useState } from 'react';
@@ -6,6 +6,15 @@ import './App.css';
 import { Navbar } from './components/common/Navbar/Navbar';
 import Herosection from './components/Home/HeroSection';
 import Profile from './components/profile/Profile';
+
+import MerchantDashboard from './components/Merchant/MerchantDashboard'
+
+// NavbarWrapper component to conditionally render navbar
+const NavbarWrapper = () => {
+  const location = useLocation();
+  // Don't render navbar on merchant page
+  return location.pathname !== '/merchant' ? <Navbar /> : null;
+};
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -18,8 +27,12 @@ function App() {
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <NavbarWrapper isAuthenticated={isAuthenticated} onLogout={handleLogout} />
       <Routes>
+        <Route 
+          path="/merchant" 
+          element={<MerchantDashboard/>} 
+        />
         <Route 
           path="/home" 
           element={<Herosection />} 

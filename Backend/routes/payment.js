@@ -96,4 +96,94 @@ router.post('/callback', async (req, res) => {
   }
 });
 
+// Link bank account
+router.post('/link-account', auth, async (req, res) => {
+  try {
+    const { accountNumber, ifscCode } = req.body;
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Store bank details
+    user.bankAccount = {
+      accountNumber,
+      ifscCode,
+      isVerified: false
+    };
+    await user.save();
+
+    // Generate link request
+    const transactionId = `LINK_${Date.now()}_${user._id}`;
+    const payload = {
+      merchantId: MERCHANT_ID,
+      merchantTransactionId: transactionId,
+      merchantUserId: user._id,
+      callbackUrl: `${process.env.BACKEND_URL}/api/payment/link-callback`,
+      redirectUrl: `${process.env.FRONTEND_URL}/payment/link-callback`,
+      redirectMode: 'POST',
+      bankAccount: {
+        accountNumber,
+        ifscCode
+      },
+      paymentInstrument: {
+        type: 'BANK_ACCOUNT'
+      }
+    };
+
+    const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const message = base64Payload + '/pg/v1/link' + SALT_KEY;
+    const sha256 = crypto.createHash('sha256').update(message).digest('hex');
+    const checksum = sha256 + '###' + SALT_INDEX;
+
+    const response = await fetch(`${API_URL}/pg/v1/link`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-VERIFY': checksum
+      },
+      body: JSON.stringify({
+        request: base64Payload
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      res.json({
+        success: true,
+        linkUrl: data.data.instrumentResponse.redirectInfo.url
+      });
+    } else {
+      res.status(400).json({
+        message: data.message || 'Failed to link account'
+      });
+    }
+  } catch (error) {
+    console.error('Account linking error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Handle account linking callback
+router.post('/link-callback', async (req, res) => {
+  try {
+    const { merchantTransactionId, code } = req.body;
+    const userId = merchantTransactionId.split('_')[2];
+    const user = await User.findById(userId);
+
+    if (user && code === 'LINK_SUCCESS') {
+      user.bankAccount.isVerified = true;
+      await user.save();
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=success`);
+    } else {
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=failed&code=${code}`);
+    }
+  } catch (error) {
+    console.error('Link callback error:', error);
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?link=error`);
+  }
+});
+
 export default router; 

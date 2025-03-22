@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+
+
+
+/* Custom styles for rainbow banner */
+.rainbow-banner-gradient-1 {
+    background: linear-gradient(to right, #0d1152, #15229c, #1e2cc8, #4552e3, #888feb);
+    opacity: 0.7;
+  }
+  
+  .rainbow-banner-gradient-2 {
+    background: linear-gradient(to left, #0d1152, #15229c, #1e2cc8, #4552e3, #888feb);
+    opacity: 0.3;
+  }
+  
+  :root {
+    --banner-height: 0px;
+  }

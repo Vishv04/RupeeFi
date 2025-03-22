@@ -29,6 +29,14 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  bankAccount: {
+    accountNumber: String,
+    ifscCode: String,
+    isVerified: {
+      type: Boolean,
+      default: false
+    }
+  }
 });
 
 export default mongoose.model('User', userSchema); 
