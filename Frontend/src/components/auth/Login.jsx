@@ -2,8 +2,12 @@ import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import * as jwt_decode from 'jwt-decode';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = React.useState('');
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwt_decode.jwtDecode(credentialResponse.credential);
@@ -17,31 +21,19 @@ function Login() {
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/google-login`, userData
+        `${import.meta.env.VITE_API_URL}/api/auth/google-login`,
+        userData
       );
 
-      // Store token and user data including _id from backend response
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify({
-        _id: response.data.user._id,
-        name: response.data.user.name,
-        email: response.data.user.email,
-        picture: decoded.picture,
-        visitCount: response.data.user.visitCount,
-        lastVisit: response.data.user.lastVisit
-      }));
-      
-      window.location.href = '/dashboard';
-    } catch (error) {
-      console.error('Error processing Google login:', error);
-      if (error.response) {
-        console.error('Backend error:', error.response.data);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/dashboard');
       }
+    } catch (error) {
+      console.error('Google login error:', error.response?.data || error.message);
+      setError('Failed to login with Google. Please try again.');
     }
-  };
-
-  const handleGoogleError = (error) => {
-    console.error('Google login failed:', error);
   };
 
   return (
@@ -51,10 +43,11 @@ function Login() {
         <div className="flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
+            onError={() => setError('Google login failed')}
             useOneTap
           />
         </div>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );

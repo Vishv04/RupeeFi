@@ -3,45 +3,57 @@ import { Button, TextInput, Typography, Widget } from '@neo4j-ndl/react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const AddMoney = ({ userId, onTransferComplete }) => {
+const AddMoney = ({ userId }) => {
   const [amount, setAmount] = useState('');
-  const [upiPin, setUpiPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
-  const handleTransfer = async (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setSuccess('');
 
     try {
-      // First verify UPI PIN
-      const verifyResponse = await axios.post('/api/verify-upi-pin', {
-        userId,
-        upiPin
+      // Create Razorpay order
+      const orderResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
+        amount: amount * 100, // Convert to paise
+        userId
       });
 
-      if (verifyResponse.data.verified) {
-        // If PIN is verified, proceed with transfer
-        const transferResponse = await axios.post('/api/transfer-to-erupee', {
-          userId,
-          amount: parseFloat(amount),
-          upiPin
-        });
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amount * 100,
+        currency: "INR",
+        name: "RupeeFi",
+        description: "Add money to UPI account",
+        order_id: orderResponse.data.orderId,
+        handler: async (response) => {
+          try {
+            // Verify payment and update UPI balance
+            const verifyResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/verify`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              userId
+            });
 
-        if (transferResponse.data.success) {
-          setSuccess('Money transferred successfully to e-Rupee wallet!');
-          setAmount('');
-          setUpiPin('');
-          if (onTransferComplete) {
-            onTransferComplete(transferResponse.data);
+            if (verifyResponse.data.success) {
+              setAmount('');
+              alert('Money added successfully to your UPI account!');
+            }
+          } catch (err) {
+            setError('Payment verification failed');
           }
+        },
+        theme: {
+          color: "#3399cc"
         }
-      }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to process transfer');
+      setError(err.response?.data?.message || 'Failed to initiate payment');
     } finally {
       setLoading(false);
     }
@@ -50,10 +62,10 @@ const AddMoney = ({ userId, onTransferComplete }) => {
   return (
     <Widget className="p-4">
       <Typography variant="h4" className="mb-4">
-        Add Money to e-Rupee Wallet
+        Add Money to UPI Account
       </Typography>
 
-      <form onSubmit={handleTransfer}>
+      <form onSubmit={handlePayment}>
         <div className="mb-4">
           <TextInput
             label="Amount (₹)"
@@ -67,38 +79,19 @@ const AddMoney = ({ userId, onTransferComplete }) => {
           />
         </div>
 
-        <div className="mb-4">
-          <TextInput
-            label="UPI PIN"
-            type="password"
-            value={upiPin}
-            onChange={(e) => setUpiPin(e.target.value)}
-            placeholder="Enter UPI PIN"
-            required
-            maxLength="6"
-            className="w-full"
-          />
-        </div>
-
         {error && (
           <Typography variant="body2" className="text-red-500 mb-3">
             {error}
           </Typography>
         )}
 
-        {success && (
-          <Typography variant="body2" className="text-green-500 mb-3">
-            {success}
-          </Typography>
-        )}
-
         <Button
           type="submit"
-          disabled={loading || !amount || !upiPin}
+          disabled={loading || !amount}
           loading={loading}
           className="w-full"
         >
-          {loading ? 'Processing...' : 'Add Money'}
+          {loading ? 'Processing...' : 'Add Money via Razorpay'}
         </Button>
       </form>
     </Widget>
@@ -106,8 +99,7 @@ const AddMoney = ({ userId, onTransferComplete }) => {
 };
 
 AddMoney.propTypes = {
-  userId: PropTypes.string.isRequired,
-  onTransferComplete: PropTypes.func
+  userId: PropTypes.string.isRequired
 };
 
 export default AddMoney; 
