@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@neo4j-ndl/react": "^3.3.22",
+    "@neo4j-nvl/react": "^0.3.8",
     "@react-oauth/google": "^0.12.1",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.4",
+    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.14"
