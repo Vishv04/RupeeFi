@@ -12,7 +12,6 @@
   "description": "",
   "dependencies": {
     "axios": "^1.8.4",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.6.0",
     "cors": "^2.8.5",
