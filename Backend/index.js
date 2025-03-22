@@ -8,6 +8,7 @@ import { cloudinaryConnect } from './config/cloudinary.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import merchantRoutes from './routes/merchant.js';
 
 // Configure env
 dotenv.config();
@@ -23,14 +24,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/merchant', merchantRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
