@@ -16,8 +16,6 @@ router.post('/google-login', async (req, res) => {
         name,
         picture,
         googleId,
-        upiBalance: 0,
-        eRupeeBalance: 0
       });
     }
 
