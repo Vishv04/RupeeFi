@@ -17,3 +17,24 @@
   :root {
     --banner-height: 0px;
   }
+
+/* Add these to your existing CSS */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.shadow-text {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Optional: Add this if you want a subtle pulsing effect on the center button */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}

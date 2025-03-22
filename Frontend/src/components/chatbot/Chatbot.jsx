@@ -1,11 +1,8 @@
-/* eslint-disable no-confusing-arrow */
 import { useEffect, useRef, useState } from 'react';
-// Remove neo4j-ndl components import
-// import { Button, Widget, Typography, Avatar, TextInput } from '@neo4j-ndl/react';
 import PropTypes from 'prop-types';
-
-import ChatBotUserAvatar from '../assets/chatbot-user.png';
-import ChatBotAvatar from '../assets/chatbot-ai.png';
+import { getGeminiResponse } from '../../services/geminiService';
+import ChatBotUserAvatar from '../../assets/chatbot-user.png'
+import ChatBotAvatar from '../../assets/chatbot-ai.png';
 
 // Predefined help responses for e-Rupee and RupeeSpin
 const helpResponses = {
@@ -21,24 +18,11 @@ const helpResponses = {
     "default": "Hmm, I'm not sure about that. Try asking about e-Rupee, rewards, or how merchants join RupeeSpin!"
   };
 
-export default function Chatbot(props) {
-  const { messages } = props;
-
-  // State management
+export default function Chatbot({ messages = [], onClose }) {
   const [listMessages, setListMessages] = useState(messages);
   const [inputMessage, setInputMessage] = useState('');
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
-
-  // Style for formatted text (e.g., code within backticks)
-  const formattedTextStyle = { color: 'rgb(var(--theme-palette-discovery-bg-strong))' };
-
-  // Ref for scrolling to the bottom of the chat
   const messagesEndRef = useRef(null);
-
-  // Handle input change
-  const handleInputChange = (e) => {
-    setInputMessage(e.target.value);
-  };
 
   // Simulate typing effect for chatbot responses
   const simulateTypingEffect = (responseText, index = 0) => {
@@ -65,147 +49,124 @@ export default function Chatbot(props) {
     }
   };
 
-  // Handle form submission and provide help response
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!inputMessage.trim() || isWaitingForResponse) {
-      return;
-    }
+    if (!inputMessage.trim() || isWaitingForResponse) return;
 
     const date = new Date();
     const datetime = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     const userMessage = { id: Date.now(), user: 'user', message: inputMessage, datetime };
 
-    // Add user message to the list and clear input
     setListMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputMessage('');
     setIsWaitingForResponse(true);
 
-    // Simulate API delay and get predefined response
-    setTimeout(() => {
-      const query = inputMessage.toLowerCase().trim();
-      const response = helpResponses[query] || helpResponses['default'];
-      setIsWaitingForResponse(false);
+    try {
+      const response = await getGeminiResponse(inputMessage);
       simulateTypingEffect(response);
-    }, 1000); // 1-second delay to mimic processing
-  };
-
-  // Scroll to the bottom when messages or waiting state changes
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      console.error("Error getting response:", error);
+      simulateTypingEffect("I apologize, but I'm having trouble right now. Please try again later.");
+    } finally {
+      setIsWaitingForResponse(false);
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [listMessages, isWaitingForResponse]);
 
   return (
-    <div className="bg-white flex flex-col justify-between min-h-screen max-h-full overflow-hidden">
-      {/* Chat messages */}
-      <div className="flex overflow-y-auto pb-12 min-w-full">
-        <div className="bg-white w-full h-full shadow-md rounded-lg">
-          <div className="p-3 border-b border-gray-200 font-medium">RupeeSpin Help Bot</div>
-          <div className="flex flex-col gap-3 p-3">
-            {listMessages.length === 0 && (
-              <div className="flex gap-2.5 items-end">
-                <div className="-ml-4 relative">
-                  <img 
-                    src={ChatBotAvatar} 
-                    alt="Chatbot" 
-                    className="w-10 h-10 rounded-md"
-                  />
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                </div>
-                <div className="p-4 self-start max-w-[55%] bg-gray-100 rounded-lg">
-                  <p className="text-base font-medium">
-                    Hi! I'm the RupeeSpin Help Bot. Ask me about e-Rupee, payments, rewards, or merchant setup—try "How do I use RupeeSpin?"
-                  </p>
-                </div>
-              </div>
-            )}
-            {listMessages.map((chat) => (
-              <div
-                key={chat.id}
-                className={`flex gap-2.5 items-end ${chat.user === 'chatbot' ? 'flex-row' : 'flex-row-reverse'}`}
-              >
-                <div className="w-8 h-8 relative">
-                  {chat.user === 'chatbot' ? (
-                    <div className="-ml-4 relative">
-                      <img 
-                        src={ChatBotAvatar} 
-                        alt="Chatbot" 
-                        className="w-10 h-10 rounded-md"
-                      />
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <img 
-                        src={ChatBotUserAvatar} 
-                        alt="User" 
-                        className="w-10 h-10 rounded-md"
-                      />
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                    </div>
-                  )}
-                </div>
-                <div
-                  className={`p-4 self-start max-w-[55%] rounded-lg shadow-sm ${
-                    chat.user === 'chatbot' ? 'bg-gray-100' : 'bg-blue-100'
-                  }`}
-                >
-                  <div>
-                    {chat.message.split(/`(.+?)`/).map((part, index) =>
-                      index % 2 === 1 ? (
-                        <span key={index} style={formattedTextStyle}>
-                          {part}
-                        </span>
-                      ) : (
-                        part
-                      )
-                    )}
-                  </div>
-                  <div className="text-right align-bottom pt-3">
-                    <p className="text-xs text-gray-500">{chat.datetime}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {/* Typing indicator */}
-            {isWaitingForResponse && (
-              <div className="flex gap-2.5 items-end">
-                <div className="-ml-4 relative">
-                  <img 
-                    src={ChatBotAvatar} 
-                    alt="Chatbot" 
-                    className="w-10 h-10 rounded-md"
-                  />
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                </div>
-                <div className="p-4 self-start max-w-[55%] bg-gray-100 rounded-lg">
-                  <p className="text-base font-medium">RupeeSpin Bot is typing...</p>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
+    <div className="flex flex-col h-full bg-gray-50">
+      {/* Chat Header */}
+      <div className="bg-white shadow-sm p-4 border-b flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-gray-800">RupeeSpin Help Bot</h2>
       </div>
 
-      {/* Input form */}
-      <div className="bg-white flex gap-2.5 bottom-0 p-2.5 w-full border-t border-gray-200">
-        <form onSubmit={handleSubmit} className="flex gap-2.5 w-full">
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Welcome Message */}
+        {listMessages.length === 0 && (
+          <div className="flex gap-3">
+            <div className="flex-shrink-0 relative">
+              <img 
+                src={ChatBotAvatar} 
+                alt="Bot" 
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm max-w-[80%]">
+              <p className="text-gray-800">
+                Hi! I'm the RupeeSpin Help Bot. Ask me about e-Rupee, payments, rewards, or merchant setup—try "How do I use RupeeSpin?"
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Chat Messages */}
+        {listMessages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex gap-3 ${message.user === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+          >
+            <div className="flex-shrink-0 relative">
+              <img
+                src={message.user === 'user' ? ChatBotUserAvatar : ChatBotAvatar}
+                alt={message.user === 'user' ? 'User' : 'Bot'}
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            </div>
+            <div
+              className={`p-4 rounded-lg shadow-sm max-w-[80%] ${
+                message.user === 'user' ? 'bg-blue-50' : 'bg-white'
+              }`}
+            >
+              <p className="text-gray-800 whitespace-pre-wrap">{message.message}</p>
+              <p className="text-xs text-gray-500 mt-2">{message.datetime}</p>
+            </div>
+          </div>
+        ))}
+
+        {/* Typing Indicator */}
+        {isWaitingForResponse && (
+          <div className="flex gap-3">
+            <div className="flex-shrink-0 relative">
+              <img 
+                src={ChatBotAvatar} 
+                alt="Bot" 
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="flex gap-2">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+              </div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Chat Input */}
+      <div className="bg-white border-t p-4">
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <input
-            className="bg-white flex-grow-7 w-full border border-gray-300 rounded-md px-3 py-2"
             type="text"
             value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Ask about e-Rupee or RupeeSpin..."
-            onChange={handleInputChange}
-          />
-          <button 
-            type="submit" 
+            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isWaitingForResponse}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+          />
+          <button
+            type="submit"
+            disabled={isWaitingForResponse}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300"
           >
             Send
           </button>
@@ -215,7 +176,6 @@ export default function Chatbot(props) {
   );
 }
 
-// Add PropTypes validation
 Chatbot.propTypes = {
   messages: PropTypes.arrayOf(
     PropTypes.shape({
@@ -225,5 +185,6 @@ Chatbot.propTypes = {
       datetime: PropTypes.string.isRequired,
       isTyping: PropTypes.bool,
     })
-  ).isRequired,
+  ),
+  onClose: PropTypes.func,
 };

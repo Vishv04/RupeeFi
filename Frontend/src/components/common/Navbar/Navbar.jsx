@@ -174,6 +174,9 @@ function Navbar({ isAuthenticated, onLogout }) {
                     <Link to="/profile" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
                       Profile
                     </Link>
+                    <Link to="/rewards" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                      🎁 Rewards
+                    </Link>
                     <Link to="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
                       Settings
                     </Link>
@@ -263,6 +266,9 @@ function Navbar({ isAuthenticated, onLogout }) {
                 <div className="space-y-2">
                   <Link to="/profile" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
                     Profile
+                  </Link>
+                  <Link to="/rewards" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    🎁 Rewards
                   </Link>
                   <Link to="/settings" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
                     Settings

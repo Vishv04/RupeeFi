@@ -8,9 +8,11 @@ import Herosection from './components/Home/HeroSection';
 import Profile from './components/profile/Profile';
 
 import MerchantDashboard from './components/Merchant/MerchantDashboard'
-import MerchantLogin from './components/merchant/MerchantLogin';
-import MerchantRegister from './components/merchant/MerchantRegister';
-import MerchantLanding from './components/merchant/MerchantLanding';
+import MerchantLogin from './components/Merchant/MerchantLogin';
+import MerchantRegister from './components/Merchant/MerchantRegister';
+import MerchantLanding from './components/Merchant/MerchantLanding';
+import RewardsPage from './components/rewards/RewardsPage';
+import ChatButton from './components/chatbot/ChatButton';
 
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
@@ -62,7 +64,12 @@ function App() {
           path="/profile" 
           element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
         />
+        <Route 
+          path="/rewards" 
+          element={isAuthenticated ? <RewardsPage /> : <Navigate to="/login" />} 
+        />
       </Routes>
+      <ChatButton />
     </Router>
   );
 }
