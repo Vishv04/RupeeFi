@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 import { motion } from "framer-motion";
 
-function Login() {
+function Login({ setIsAuthenticated }) {
   const [error, setError] = React.useState('');
 
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -27,6 +27,7 @@ function Login() {
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        setIsAuthenticated(true);
         window.location.href = '/dashboard';
       } else {
         setError('Login failed. Please try again.');
