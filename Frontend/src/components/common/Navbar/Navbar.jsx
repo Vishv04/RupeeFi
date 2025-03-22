@@ -142,7 +142,7 @@ function Navbar({ isAuthenticated, onLogout }) {
               to="/" 
               className="font-bold text-2xl tracking-tight relative group"
             >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-300">RUPEE</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-300">RupeeFi</span>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </div>
