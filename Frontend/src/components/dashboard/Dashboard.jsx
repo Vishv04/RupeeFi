@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [walletData, setWalletData] = useState({
+    upiWallet: { balance: 0 },
+    eRupeeWallet: { balance: 0 }
+  });
   const [userData, setUserData] = useState({
     name: 'User',
     email: '',
@@ -12,12 +17,27 @@ const Dashboard = ({ setIsAuthenticated }) => {
   });
 
   useEffect(() => {
-    // Fetch user data from localStorage or API
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setUserData(user);
+      fetchWalletBalances(user._id);
     }
   }, []);
+
+  const fetchWalletBalances = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/wallet/balances/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setWalletData(response.data);
+    } catch (error) {
+      console.error('Error fetching wallet balances:', error);
+    }
+  };
 
   const handleLogout = () => {
     setShowLogoutConfirm(true);
@@ -32,21 +52,47 @@ const Dashboard = ({ setIsAuthenticated }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pt-24">
-        {/* Dashboard Content */}
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
-            
-            <div className="grid grid-cols-1 gap-6">
-              {/* User Info Card */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">User Information</h3>
-                <div className="space-y-3">
-                  <p><span className="font-medium">Name:</span> {userData.name}</p>
-                  <p><span className="font-medium">Email:</span> {userData.email}</p>
-                </div>
+          {/* User Info Card */}
+          <div className="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 className="text-2xl font-bold mb-4">Welcome, {userData.name}!</h2>
+            <div className="space-y-3">
+              <p><span className="font-medium">Email:</span> {userData.email}</p>
+            </div>
+          </div>
+
+          {/* Wallets Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* UPI Wallet Card */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">UPI Wallet</h3>
+                <Link 
+                  to={`/wallet/upi/${userData._id}`}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  More Details →
+                </Link>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">
+                ₹{walletData.upiWallet.balance.toFixed(2)}
+              </div>
+            </div>
+
+            {/* eRupee Wallet Card */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">eRupee Wallet</h3>
+                <Link 
+                  to={`/wallet/erupee/${userData._id}`}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  More Details →
+                </Link>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">
+                ₹{walletData.eRupeeWallet.balance.toFixed(2)}
               </div>
             </div>
           </div>

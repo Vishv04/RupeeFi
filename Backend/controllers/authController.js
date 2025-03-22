@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import { initializeWallets } from '../routes/wallet.js';
+import Wallet from '../models/wallet.js';
+import Profile from '../models/profile.js';
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -9,6 +12,36 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
+};
+
+const initializeWallet = async (userId) => {
+  try {
+    let profile = await Profile.findOne({ user: userId });
+    
+    if (!profile) {
+      profile = new Profile({
+        user: userId,
+        qrCode: `USER_${userId}_${Date.now()}`,
+      });
+    }
+
+    if (!profile.walletId) {
+      const wallet = await Wallet.create({
+        profile: profile._id,
+        upiBalance: 0,
+        eRupeeBalance: 0,
+        upiTransactions: [],
+        eRupeeTransactions: []
+      });
+      profile.walletId = wallet._id;
+      await profile.save();
+    }
+
+    return profile;
+  } catch (error) {
+    console.error('Error initializing wallet:', error);
+    throw error;
+  }
 };
 
 export const googleLogin = async (req, res) => {
@@ -48,7 +81,7 @@ export const googleLogin = async (req, res) => {
     // Generate JWT token with MongoDB _id
     const jwtToken = jwt.sign(
       { 
-        id: user._id, // Changed from _id to id to match auth middleware
+        id: user._id,
         email,
         name,
         sub: googleId,
