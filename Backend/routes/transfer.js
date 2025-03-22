@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import User from '../models/User.js';
+import auth from '../middleware/auth.js';
+
 const router = express.Router();
-const User = require('../models/User');
-const auth = require('../middleware/auth');
 
 // Verify UPI PIN
 router.post('/verify-upi-pin', auth, async (req, res) => {
@@ -12,7 +13,9 @@ router.post('/verify-upi-pin', auth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    if (user.upiPin !== upiPin) {
+
+    const isValid = await user.verifyUpiPin(upiPin);
+    if (!isValid) {
       return res.status(400).json({ message: 'Invalid UPI PIN' });
     }
 
@@ -33,7 +36,8 @@ router.post('/transfer-to-erupee', auth, async (req, res) => {
     }
 
     // Verify UPI PIN again for security
-    if (user.upiPin !== upiPin) {
+    const isValid = await user.verifyUpiPin(upiPin);
+    if (!isValid) {
       return res.status(400).json({ message: 'Invalid UPI PIN' });
     }
 
@@ -60,4 +64,4 @@ router.post('/transfer-to-erupee', auth, async (req, res) => {
   }
 });
 
-module.exports = router; 
+export default router; 
