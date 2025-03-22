@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Merchant from '../models/merchant.js';
 
-export const protect = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
     // console.log(req.headers);
     let token;
@@ -10,22 +10,22 @@ export const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
     }
     if (!token) {
-      return res.status(401).json({
+      return res.status(401).json({ 
         success: false,
-        message: 'Please login to access this resource'
+        message: 'No token, authorization denied' 
       });
     }
 
-    // Verify token and extract user data
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // Find user using the id from token
     const user = await User.findById(decoded.id);
-
+    
     if (!user) {
-      return res.status(401).json({
+      return res.status(401).json({ 
         success: false,
-        message: 'User not found'
+        message: 'User not found' 
       });
     }
 
@@ -34,9 +34,9 @@ export const protect = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Auth middleware error:', error);
-    res.status(401).json({
+    res.status(401).json({ 
       success: false,
-      message: 'Not authorized to access this route'
+      message: 'Token is not valid' 
     });
   }
 };
