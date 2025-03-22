@@ -8,6 +8,7 @@ import { cloudinaryConnect } from './config/cloudinary.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import paymentRoutes from './routes/payment.js';
 import merchantRoutes from './routes/merchant.js';
 
 // Configure env
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/merchant', merchantRoutes);
 
 // Error handling middleware
