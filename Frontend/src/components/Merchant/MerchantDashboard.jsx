@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MerchantHeader from './MerchantHeader';
 import DashboardView from './DashboardView';
 import TransactionsView from './TransactionsView';
 import EmployeesView from './EmployeesView';
 import ProfileView from './ProfileView';
+import MerchantNavbar from './MerchantNavbar';
 
 const MerchantDashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  
+  const navigate = useNavigate();
+  const merchant = JSON.parse(localStorage.getItem('merchant') || '{}');
+  const token = localStorage.getItem('merchantToken');
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/merchant/login');
+    }
+  }, [token, navigate]);
+
+  if (!token) return null;
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -26,6 +39,7 @@ const MerchantDashboard = () => {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'} transition-colors duration-300`}>
+      <MerchantNavbar />
       {/* Top Navigation */}
       <MerchantHeader 
         darkMode={darkMode} 
