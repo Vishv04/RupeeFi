@@ -4,42 +4,41 @@ import User from '../models/User.js';
 // Get user profile
 export const getProfile = async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const profile = await Profile.findOne({ user: req.query.userId });
     
-    if (!userId) {
-      return res.status(400).json({ 
-        success: false,
-        message: 'User ID is required' 
-      });
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
     }
 
-    const profile = await Profile.findOne({ user: userId });
+    // Get UPI wallet
+    const upiWalletData = await UpiWallet.findById(profile.upiWalletId);
     
-    // If no profile exists, create one with default values
-    if (!profile) {
-      const newProfile = await Profile.create({
-        user: userId,
-        qrCode: `QR_${userId}`,
-        erupeeId: `ERUP_${userId}`,
-        referralCode: `REF_${Math.random().toString(36).substr(2, 9)}`
-      });
-      
-      return res.json({
-        success: true,
-        data: newProfile
-      });
+    // Get eRupee wallet
+    const erupeeWalletData = await ERupeeWallet.findById(profile.eRupeeWalletId);
+
+    // Get user data
+    const user = await User.findById(req.query.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
     res.json({
       success: true,
-      data: profile
+      profile: {
+        ...profile.toObject(),
+        upiWallet: upiWalletData || null,
+        eRupeeWallet: erupeeWalletData || null,
+        user: {
+          name: user.name,
+          email: user.email,
+          picture: user.picture
+        }
+      }
     });
   } catch (error) {
-    console.error('Get profile error:', error);
-    res.status(500).json({ 
-      success: false,
-      message: 'Server error' 
-    });
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

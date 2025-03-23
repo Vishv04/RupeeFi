@@ -189,3 +189,5 @@ export const verifyOTP = async (req, res) => {
     res.status(500).json({ message: 'Error verifying OTP' });
   }
 }; 
+
+export default { checkKYCStatus, submitKYCDetails, sendOTP, verifyOTP };
