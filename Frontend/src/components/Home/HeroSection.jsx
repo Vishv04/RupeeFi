@@ -103,7 +103,8 @@ export default function Herosection() {
             }}
             className="relative z-10 mx-auto text-blue-700max-w-2xl py-6 text-center text-lg font-normal text-gray-600"
           >
-            Empower your financial journey with smart banking solutions, investment opportunities, and personalized financial insights — all in one secure platform.
+            Despite the Indian government’s efforts, the adoption of India’s Central Bank Digital Currency (CBDC), the e-Rupee, remains limited.
+
           </motion.p>
         </motion.div>
 
