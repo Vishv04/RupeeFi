@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaStore } from 'react-icons/fa';
+import KYCForm from '../kyc/KYCForm';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -15,8 +15,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
     email: '',
     visitCount: 0,
     lastVisit: null,
-    isMerchant: false
+    isMerchant: false,
+    kycCompleted: false
   });
+  const [showKYCForm, setShowKYCForm] = useState(false);
 
   useEffect(() => {
     // Fetch user data from localStorage or API
@@ -24,9 +26,11 @@ const Dashboard = ({ setIsAuthenticated }) => {
     if (user) {
       setUserData({
         ...user,
-        isMerchant: user.isMerchant || false
+        isMerchant: user.isMerchant || false,
+        kycCompleted: user.kycCompleted || false
       });
       fetchWalletBalances(user._id);
+      checkKYCStatus(user._id);
     }
   }, []);
 
@@ -79,6 +83,11 @@ const Dashboard = ({ setIsAuthenticated }) => {
     navigate('/');
   };
 
+  const handleKYCComplete = () => {
+    setShowKYCForm(false);
+    setUserData(prev => ({ ...prev, kycCompleted: true }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pt-24">
@@ -111,58 +120,19 @@ const Dashboard = ({ setIsAuthenticated }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4">e-Rupee Balance</h3>
-              <p className="text-3xl font-bold">₹{walletData.eRupeeWallet.balance.toFixed(2)}</p>
-              <Link
-                to="/wallet/erupee"
-                className="mt-4 inline-block text-indigo-600 hover:text-indigo-800"
-              >
-                Manage e-Rupee Wallet →
-              </Link>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">eRupee Wallet</h3>
+                <Link 
+                  to={`/wallet/erupee/${userData._id}`}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  More Details →
+                </Link>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">
+                ₹{walletData.eRupeeWallet.balance.toFixed(2)}
+              </div>
             </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link
-              to="/transfer"
-              className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-            >
-              <h3 className="text-lg font-semibold mb-2">Send Money</h3>
-              <p className="text-gray-600">Transfer e-Rupee to other users</p>
-            </Link>
-
-            <Link
-              to="/rewards"
-              className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-            >
-              <h3 className="text-lg font-semibold mb-2">Rewards</h3>
-              <p className="text-gray-600">View and claim your rewards</p>
-            </Link>
-
-            {userData.isMerchant ? (
-              <Link
-                to="/merchant/dashboard"
-                className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <FaStore className="mr-2" />
-                  Merchant Dashboard
-                </h3>
-                <p className="text-gray-600">Manage your merchant account</p>
-              </Link>
-            ) : (
-              <Link
-                to="/merchant/register"
-                className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <FaStore className="mr-2" />
-                  Become a Merchant
-                </h3>
-                <p className="text-gray-600">Start accepting e-Rupee payments</p>
-              </Link>
-            )}
           </div>
         </div>
       </main>
