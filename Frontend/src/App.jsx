@@ -12,7 +12,7 @@ import MerchantLogin from './components/Merchant/MerchantLogin';
 import MerchantRegister from './components/Merchant/MerchantRegister';
 import MerchantLanding from './components/Merchant/MerchantLanding';
 import RewardsPage from './components/rewards/RewardsPage';
-import ChatButton from './components/chatbot/ChatButton';import WalletDashboard from './components/wallet/WalletDashboard';
+import ChatButton from './components/chatbot/ChatButton';
 import UPIWallet from './components/wallet/UPIWallet';
 import ERupeeWallet from './components/wallet/ERupeeWallet';
 
@@ -118,10 +118,6 @@ function App() {
         <Route 
           path="/wallet/erupee/:userId" 
           element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/wallet/:userId" 
-          element={isAuthenticated ? <WalletDashboard /> : <Navigate to="/login" />} 
         />
       </Routes>
       <ChatButton />
