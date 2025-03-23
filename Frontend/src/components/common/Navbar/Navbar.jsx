@@ -182,9 +182,6 @@ function Navbar({ isAuthenticated, onLogout }) {
                     <Link to="/blockchain" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
                       ⛓️ Blockchain
                     </Link>
-                    <Link to="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
-                      Settings
-                    </Link>
                     <button
                       onClick={() => setShowLogoutConfirm(true)}
                       className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-50 transition-all duration-200"
