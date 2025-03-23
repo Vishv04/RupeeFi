@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { FaUniversity, FaChartLine, FaUmbrella, FaMoneyBill, FaUser, FaSignOutAlt, FaCog, FaGift } from "react-icons/fa";
+import { BsBuilding, BsCreditCard, BsBriefcase, BsCurrencyDollar } from "react-icons/bs";
+import { HiUsers, HiAcademicCap, HiNewspaper, HiOutlineBadgeCheck } from "react-icons/hi";
 
 function Navbar({ isAuthenticated, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,30 +44,30 @@ function Navbar({ isAuthenticated, onLogout }) {
       title: "Personal",
       hasDropdown: true,
       items: [
-        { title: "Banking", href: "/personal/banking" },
-        { title: "Investing", href: "/personal/investing" },
-        { title: "Insurance", href: "/personal/insurance" },
-        { title: "Loans", href: "/personal/loans" },
+        { title: "Banking", href: "/personal/banking", icon: <FaUniversity className="w-4 h-4" /> },
+        { title: "Investing", href: "/personal/investing", icon: <FaChartLine className="w-4 h-4" /> },
+        { title: "Insurance", href: "/personal/insurance", icon: <FaUmbrella className="w-4 h-4" /> },
+        { title: "Loans", href: "/personal/loans", icon: <FaMoneyBill className="w-4 h-4" /> },
       ],
     },
     {
       title: "Business",
       hasDropdown: true,
       items: [
-        { title: "Accounts", href: "/business/accounts" },
-        { title: "Payments", href: "/business/payments" },
-        { title: "Financing", href: "/business/financing" },
-        { title: "Treasury", href: "/business/treasury" },
+        { title: "Accounts", href: "/business/accounts", icon: <BsBuilding className="w-4 h-4" /> },
+        { title: "Payments", href: "/business/payments", icon: <BsCreditCard className="w-4 h-4" /> },
+        { title: "Financing", href: "/business/financing", icon: <BsBriefcase className="w-4 h-4" /> },
+        { title: "Treasury", href: "/business/treasury", icon: <BsCurrencyDollar className="w-4 h-4" /> },
       ],
     },
     {
       title: "Company",
       hasDropdown: true,
       items: [
-        { title: "About", href: "/company/about" },
-        { title: "Careers", href: "/company/careers" },
-        { title: "Press", href: "/company/press" },
-        { title: "Investors", href: "/company/investors" },
+        { title: "About", href: "/company/about", icon: <HiUsers className="w-4 h-4" /> },
+        { title: "Careers", href: "/company/careers", icon: <HiAcademicCap className="w-4 h-4" /> },
+        { title: "Press", href: "/company/press", icon: <HiNewspaper className="w-4 h-4" /> },
+        { title: "Investors", href: "/company/investors", icon: <HiOutlineBadgeCheck className="w-4 h-4" /> },
       ],
     },
   ];
@@ -110,7 +113,10 @@ function Navbar({ isAuthenticated, onLogout }) {
                           to={subItem.href}
                           className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-all duration-200 relative overflow-hidden"
                         >
-                          <span className="relative z-10">{subItem.title}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-indigo-600">{subItem.icon}</span>
+                            <span className="relative z-10">{subItem.title}</span>
+                          </div>
                           <span className="absolute bottom-0 left-0 w-0 h-full bg-gray-100 -z-10 transition-all duration-200 ease-out hover:w-full"></span>
                         </Link>
                       ))}
@@ -172,19 +178,31 @@ function Navbar({ isAuthenticated, onLogout }) {
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-sm shadow-xl rounded-lg overflow-hidden">
                     <Link to="/profile" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
-                      Profile
+                      <div className="flex items-center gap-2">
+                        <FaUser className="text-indigo-600 w-4 h-4" />
+                        <span>Profile</span>
+                      </div>
                     </Link>
                     <Link to="/rewards" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
-                      🎁 Rewards
+                      <div className="flex items-center gap-2">
+                        <FaGift className="text-indigo-600 w-4 h-4" />
+                        <span> Rewards</span>
+                      </div>
                     </Link>
-                    <Link to="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
-                      Settings
-                    </Link>
+                    {/* <Link to="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                      <div className="flex items-center gap-2">
+                        <FaCog className="text-indigo-600 w-4 h-4" />
+                        <span>Settings</span>
+                      </div>
+                    </Link> */}
                     <button
                       onClick={() => setShowLogoutConfirm(true)}
                       className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-50 transition-all duration-200"
                     >
-                      Logout
+                      <div className="flex items-center gap-2">
+                        <FaSignOutAlt className="text-red-600 w-4 h-4" />
+                        <span>Logout</span>
+                      </div>
                     </button>
                   </div>
                 )}
@@ -235,7 +253,10 @@ function Navbar({ isAuthenticated, onLogout }) {
                       to={subItem.href}
                       className="block py-2 text-gray-600 hover:text-black transition-colors duration-200 hover:translate-x-1 transform"
                     >
-                      {subItem.title}
+                      <div className="flex items-center gap-2">
+                        <span className="text-indigo-600">{subItem.icon}</span>
+                        {subItem.title}
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -254,19 +275,31 @@ function Navbar({ isAuthenticated, onLogout }) {
               {isAuthenticated ? (
                 <div className="space-y-2">
                   <Link to="/profile" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
-                    Profile
+                    <div className="flex items-center gap-2">
+                      <FaUser className="text-indigo-600 w-4 h-4" />
+                      <span>Profile</span>
+                    </div>
                   </Link>
                   <Link to="/rewards" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
-                    🎁 Rewards
+                    <div className="flex items-center gap-2">
+                      <FaGift className="text-indigo-600 w-4 h-4" />
+                      <span>🎁 Rewards</span>
+                    </div>
                   </Link>
                   <Link to="/settings" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
-                    Settings
+                    <div className="flex items-center gap-2">
+                      <FaCog className="text-indigo-600 w-4 h-4" />
+                      <span>Settings</span>
+                    </div>
                   </Link>
                   <button
                     onClick={() => setShowLogoutConfirm(true)}
                     className="block w-full text-left p-2 text-red-600 rounded-lg hover:bg-gray-50 transition-all duration-200"
                   >
-                    Logout
+                    <div className="flex items-center gap-2">
+                      <FaSignOutAlt className="text-red-600 w-4 h-4" />
+                      <span>Logout</span>
+                    </div>
                   </button>
                 </div>
               ) : (

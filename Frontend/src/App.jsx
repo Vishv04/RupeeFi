@@ -17,7 +17,7 @@ import ChatButton from './components/chatbot/ChatButton';
 import UPIWallet from './components/wallet/UPIWallet';
 import ERupeeWallet from './components/wallet/ERupeeWallet';
 import BlockchainViewer from './components/BlockchainViewer';
-
+import Transfer from './components/Transfer';
 
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
@@ -126,6 +126,16 @@ function App() {
             <Route 
           path="/blockchain" 
           element={isAuthenticated ? <BlockchainViewer /> : <Navigate to="/login" />} 
+        />
+
+        {/* Wallet Routes */}
+        <Route 
+          path="/wallet/upi" 
+          element={isAuthenticated ? <UPIWallet /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/wallet/erupee" 
+          element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
         />
       </Routes>
         </main>
