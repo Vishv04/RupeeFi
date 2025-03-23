@@ -19,6 +19,14 @@ const userkycSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    signature: {
+        type: String,
+        required: true,
+    },
+    facialData: {
+        type: String,
+        required: true,
+    },
     contactNumber: {
         type: String,
         required: true,

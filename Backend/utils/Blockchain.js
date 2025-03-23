@@ -23,8 +23,13 @@ class Blockchain {
         return crypto.createHash('sha256').update(blockString).digest('hex');
     }
 
-    addTransaction(sender, receiver, amount) {
-        const transaction = { sender, receiver, amount, timestamp: Date.now() };
+    addTransaction(senderErupeeId, receiverErupeeId, amount) {
+        const transaction = {
+            sender: senderErupeeId,
+            receiver: receiverErupeeId,
+            amount,
+            timestamp: Date.now()
+        };
         this.pendingTransactions.push(transaction);
         return this.chain.length + 1;
     }

@@ -1,5 +1,4 @@
 import express from 'express';
-import { protect } from '../middleware/auth.js';
 import {
   checkKYCStatus,
   submitKYCDetails,
@@ -9,21 +8,9 @@ import {
 
 const router = express.Router();
 
-// Test route (no auth)
-router.get('/test', (req, res) => {
-  res.json({ message: 'KYC routes are working' });
-});
-
-// Check KYC status
-router.get('/status/:userId', protect, checkKYCStatus);
-
-// Submit KYC details
-router.post('/details', protect, submitKYCDetails);
-
-// Send OTP for verification
-router.post('/send-otp', protect, sendOTP);
-
-// Verify OTP
-router.post('/verify-otp', protect, verifyOTP);
+router.get('/status/:userId', checkKYCStatus);
+router.post('/details', submitKYCDetails);
+router.post('/send-otp', sendOTP);
+router.post('/verify-otp', verifyOTP);
 
 export default router; 

@@ -3,24 +3,45 @@ import protect from '../middleware/auth.js';
 import { getProfile, updateProfile, deleteProfile } from '../controllers/profile.js';
 import Profile from '../models/Profile.js';
 import User from '../models/User.js';
+import UpiWallet from '../models/upiWallet.js';
+import ERupeeWallet from '../models/eRupeeWallet.js';
 
 const router = express.Router();
 
 // Profile routes
 router.get('/profile', protect, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.query.userId })
-      .populate('merchantId', '-password -__v')
-      .populate('upiWalletId')
-      .populate('eRupeeWalletId');
-
+    const profile = await Profile.findOne({ user: req.query.userId });
+    
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
+    // Get UPI wallet
+    const upiWalletData = await UpiWallet.findById(profile.upiWalletId);
+    
+    // Get eRupee wallet
+    const erupeeWalletData = await ERupeeWallet.findById(profile.eRupeeWalletId);
+
+    // Get user data
+    const user = await User.findById(req.query.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.json({
       success: true,
-      profile
+      profile: {
+        ...profile.toObject(),
+        upiWallet: upiWalletData || null,
+        eRupeeWallet: erupeeWalletData || null,
+        user: {
+          name: user.name,
+          email: user.email,
+          picture: user.picture
+        }
+      }
     });
   } catch (error) {
     console.error('Error fetching profile:', error);

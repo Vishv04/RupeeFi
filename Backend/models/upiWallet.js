@@ -14,13 +14,15 @@ const upiWalletSchema = new mongoose.Schema({
     transactions: [
         {
             amount: Number,
-            type: { type: String, enum: ['credit', 'debit'], required: true },
-            from: String,  // Ensure this is String type
-            to: String,    // Ensure this is String type
+            type: { type: String, enum: ['credit', 'debit', 'CREDIT', 'DEBIT'], required: true },
+            from: String,
+            to: String,
             description: String,
             timestamp: { type: Date, default: Date.now },
         },
     ]
 });
 
-export default mongoose.model('UpiWallet', upiWalletSchema); 
+const UpiWallet = mongoose.model('UpiWallet', upiWalletSchema);
+
+export default UpiWallet;

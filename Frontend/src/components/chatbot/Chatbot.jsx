@@ -4,27 +4,27 @@ import { getGeminiResponse } from "../../services/geminiService";
 import ChatBotUserAvatar from "../../assets/chatbot-user.png";
 import ChatBotAvatar from "../../assets/chatbot-ai.png";
 
-// Predefined help responses for e-Rupee and RupeeSpin
+// Predefined help responses for e-Rupee and RupeeFi
 const helpResponses = {
   "what is e-rupee":
-    "The e-Rupee is India's digital currency, launched by the RBI. It's like cash but digital, secure, and runs on blockchain. With RupeeSpin, you can use it easily!",
-  "how do i use rupeespin":
+    "The e-Rupee is India's digital currency, launched by the RBI. It's like cash but digital, secure, and runs on blockchain. With RupeeFi, you can use it easily!",
+  "how do i use RupeeFi":
     "Sign up, link your UPI or bank account, and start paying with e-Rupee via QR codes. Spin the wheel after each payment for rewards!",
   "how do i pay with e-rupee":
-    "Scan a merchant's UPI QR code in RupeeSpin, choose e-Rupee, and pay. It's fast and earns you spins!",
+    "Scan a merchant's UPI QR code in RupeeFi, choose e-Rupee, and pay. It's fast and earns you spins!",
   "what rewards do i get":
     "Every e-Rupee payment lets you spin the wheel for cashback (₹5-₹50), vouchers, or bonuses. Merchants earn medals and fee cuts!",
   "how do merchants join":
-    "Merchants link their UPI QR in RupeeSpin's dashboard. They accept e-Rupee, earn medals, and save on fees—super simple!",
+    "Merchants link their UPI QR in RupeeFi's dashboard. They accept e-Rupee, earn medals, and save on fees—super simple!",
   "is it safe":
-    "Yes! RupeeSpin uses fingerprint login and a Privacy Shield—only the RBI sees your data. It's RBI-approved and secure.",
+    "Yes! RupeeFi uses fingerprint login and a Privacy Shield—only the RBI sees your data. It's RBI-approved and secure.",
   "can i use it offline":
-    "Yes, send \"PAY 100\" via SMS in RupeeSpin's offline mode. It syncs when you're back online—great for rural areas!",
+    "Yes, send \"PAY 100\" via SMS in RupeeFi's offline mode. It syncs when you're back online—great for rural areas!",
   "why use e-rupee":
     "It's fast, secure, and rewarding! Plus, you support India's digital economy and save paper cash.",
-  help: 'I\'m here to assist! Ask about e-Rupee, payments, rewards, or merchant setup—try "how do I use RupeeSpin?"',
+  help: 'I\'m here to assist! Ask about e-Rupee, payments, rewards, or merchant setup—try "how do I use RupeeFi?"',
   default:
-    "Hmm, I'm not sure about that. Try asking about e-Rupee, rewards, or how merchants join RupeeSpin!",
+    "Hmm, I'm not sure about that. Try asking about e-Rupee, rewards, or how merchants join RupeeFi!",
 };
 
 export default function Chatbot({ messages = [], onClose }) {
@@ -107,7 +107,7 @@ export default function Chatbot({ messages = [], onClose }) {
       {/* Chat Header */}
       <div className="bg-white shadow-sm p-4 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-800">
-          RupeeSpin Help Bot
+          RupeeFi Help Bot
         </h2>
       </div>
 
@@ -126,8 +126,8 @@ export default function Chatbot({ messages = [], onClose }) {
             </div>
             <div className="bg-white p-4 rounded-lg shadow-sm max-w-[80%]">
               <p className="text-gray-800">
-                Hi! I'm the RupeeSpin Help Bot. Ask me about e-Rupee, payments,
-                rewards, or merchant setup—try "How do I use RupeeSpin?"
+                Hi! I'm the RupeeFi Help Bot. Ask me about e-Rupee, payments,
+                rewards, or merchant setup—try "How do I use RupeeFi?"
               </p>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function Chatbot({ messages = [], onClose }) {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Ask about e-Rupee or RupeeSpin..."
+            placeholder="Ask about e-Rupee or RupeeFi..."
             className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isWaitingForResponse}
           />

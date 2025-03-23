@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaStore } from 'react-icons/fa';
 import KYCForm from '../kyc/KYCForm';
 
 const Dashboard = ({ setIsAuthenticated }) => {
@@ -39,16 +38,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
     try {
       const token = localStorage.getItem('token');
       console.log('Checking KYC status for user ID:', userId);
-      console.log('Using API URL:', import.meta.env.VITE_API_URL);
-      
-      // First, test if the KYC routes are accessible
-      try {
-        const testResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/kyc/test`);
-        console.log('KYC routes test response:', testResponse.data);
-      } catch (testError) {
-        console.error('Error testing KYC routes:', testError);
-        // Continue anyway to see the specific error with the main request
-      }
       
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/kyc/status/${userId}`,
@@ -57,17 +46,11 @@ const Dashboard = ({ setIsAuthenticated }) => {
         }
       );
       
-      console.log('KYC status response:', response.data);
       setUserData(prev => ({ ...prev, kycCompleted: response.data.kycCompleted }));
-      if (!response.data.kycCompleted) {
-        setShowKYCForm(true);
-      }
     } catch (error) {
       console.error('Error checking KYC status:', error);
       console.error('Error details:', error.response?.data || error.message);
       console.log('Server responded with status:', error.response?.status);
-      // Still show KYC form if there's an error checking status
-      setShowKYCForm(true);
     }
   };
 
@@ -159,6 +142,14 @@ const Dashboard = ({ setIsAuthenticated }) => {
           {showKYCForm && (
             <div className="mb-6">
               <KYCForm onKYCComplete={handleKYCComplete} />
+              <div className="mt-4 text-right">
+                <button 
+                  onClick={() => setShowKYCForm(false)}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Close Form
+                </button>
+              </div>
             </div>
           )}
 

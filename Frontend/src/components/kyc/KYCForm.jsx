@@ -109,14 +109,14 @@ const KYCForm = ({ onKYCComplete }) => {
       const user = JSON.parse(localStorage.getItem('user'));
       
       // First test if KYC routes are accessible
-      try {
-        console.log('Testing KYC routes...');
-        const testResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/kyc/test`);
-        console.log('KYC routes test response:', testResponse.data);
-      } catch (testError) {
-        console.error('Error testing KYC routes:', testError);
-        // Continue anyway to see the specific error with the main request
-      }
+      // try {
+      //   console.log('Testing KYC routes...');
+      //   const testResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/kyc/test`);
+      //   console.log('KYC routes test response:', testResponse.data);
+      // } catch (testError) {
+      //   console.error('Error testing KYC routes:', testError);
+      //   // Continue anyway to see the specific error with the main request
+      // }
       
       const formDataToSend = new FormData();
       
@@ -145,9 +145,9 @@ const KYCForm = ({ onKYCComplete }) => {
           formDataToSend.append('facialData', formData.facialData);
         }
       }
-
+      console.log("user",user);
+      console.log("boom:",formDataToSend);
       console.log('Submitting KYC details to:', `${import.meta.env.VITE_API_URL}/api/kyc/details`);
-      
       // Send KYC details
       try {
         const kycResponse = await axios.post(

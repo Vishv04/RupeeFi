@@ -57,6 +57,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  // Payment streak tracking
+  currentStreak: {
+    type: Number,
+    default: 0,
+  },
+  lastPaymentDate: {
+    type: Date,
+    default: null,
+  },
+  streakStartDate: {
+    type: Date,
+    default: null,
+  },
+  lastStreakRewardDate: {
+    type: Date,
+    default: null,
+  },
   rewardHistory: [rewardHistorySchema],
   lastSpinDate: Date,
   visitCount: {

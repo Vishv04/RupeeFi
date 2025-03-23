@@ -31,18 +31,24 @@ const ERupeeWallet = () => {
   const fetchWalletDetails = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/wallet/erupee/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      console.log('Wallet response:', response.data); // Log the wallet data
+      console.log('Wallet response:', response.data);
       setWallet(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Wallet fetch error:', error); // Log any errors
-      setError('Failed to fetch wallet details');
+      console.error('Error fetching wallet:', error);
+      setError(error.response?.data?.error || 'Failed to fetch wallet details');
       setLoading(false);
     }
   };
@@ -62,20 +68,19 @@ const ERupeeWallet = () => {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      
-      console.log('Search response:', response.data); // Log raw response
-      
-      // Map the response data to match our frontend naming
+
+      console.log('Search response:', response.data);
+
       const formattedSuggestions = response.data.map(user => {
-        console.log('Processing user:', user); // Log each user object
+        console.log('Processing user:', user);
         return {
           name: user.name,
           erupeeId: user.erupeeId
         };
       });
-      
-      console.log('Formatted suggestions:', formattedSuggestions); // Log formatted data
-      
+
+      console.log('Formatted suggestions:', formattedSuggestions);
+
       setSuggestions(formattedSuggestions);
       setShowSuggestions(true);
     } catch (error) {
@@ -112,7 +117,7 @@ const ERupeeWallet = () => {
   const handleTransfer = async (e) => {
     e.preventDefault();
     setTransferStatus('');
-    
+
     if (!selectedUser) {
       setTransferStatus('Please select a user from the suggestions');
       return;
@@ -135,13 +140,33 @@ const ERupeeWallet = () => {
   const handleConfirmTransfer = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setTransferStatus('Not authenticated');
+        return;
+      }
+
+      if (!selectedUser?.erupeeId) {
+        setTransferStatus('Please select a valid recipient');
+        return;
+      }
+
+      if (!wallet.erupeeId) {
+        setTransferStatus('Your e-Rupee ID is not properly initialized');
+        return;
+      }
+
       const amount = parseFloat(transferData.amount);
-      
-      await axios.post(
+      console.log('Transfer payload:', {
+        senderErupeeId: wallet.erupeeId,
+        receiverErupeeId: selectedUser.erupeeId,
+        amount: amount
+      });
+
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/blockchain/transfer`,
         {
           senderErupeeId: wallet.erupeeId,
-          receiverErupeeId: transferData.receiverErupeeId,
+          receiverErupeeId: selectedUser.erupeeId,
           amount: amount
         },
         {
@@ -150,7 +175,10 @@ const ERupeeWallet = () => {
       );
 
       setShowMoneyVisualizer(false);
-      setTransferStatus('Transfer successful!');
+      setTransferStatus(response.data.rewardMessage ? 
+        `Transfer successful! ${response.data.rewardMessage}` : 
+        'Transfer successful!'
+      );
       setTransferData({
         searchQuery: '',
         receiverErupeeId: '',
@@ -160,7 +188,11 @@ const ERupeeWallet = () => {
       fetchWalletDetails();
     } catch (error) {
       setShowMoneyVisualizer(false);
-      setTransferStatus(error.response?.data?.message || 'Transfer failed');
+      console.error('Transfer error:', error);
+      setTransferStatus(
+        error.response?.data?.error || 
+        'Transfer failed. Please try again.'
+      );
     }
   };
 
