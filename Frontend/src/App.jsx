@@ -6,6 +6,7 @@ import './App.css';
 import { Navbar } from './components/common/Navbar/Navbar';
 import Herosection from './components/Home/HeroSection';
 import Profile from './components/profile/Profile';
+import Footer from './components/common/Footer';
 
 import MerchantDashboard from './components/Merchant/MerchantDashboard'
 import MerchantLogin from './components/Merchant/MerchantLogin';
@@ -65,54 +66,64 @@ function App() {
 
   return (
     <Router>
-      <NavbarWrapper isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      <Routes>
-        <Route 
-          path="/home" 
-          element={<Herosection />} 
-        />
-        <Route 
-          path="/login" 
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
-        />
-        <Route 
-          path="/" 
-          element={<Navigate to="/home" />} 
-        />
-        <Route 
-          path="/dashboard" 
-          element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
-        />
-        
-        {/* Merchant Routes */}
-        <Route path="/merchant" element={<MerchantLanding />} />
-        <Route 
-          path="/merchant/login" 
-          element={isMerchantAuthenticated ? <Navigate to="/merchant/dashboard" /> : <MerchantLogin setIsMerchantAuthenticated={setIsMerchantAuthenticated} />} 
-        />
-        <Route 
-          path="/merchant/register" 
-          element={isMerchantAuthenticated ? <Navigate to="/merchant/dashboard" /> : <MerchantRegister setIsMerchantAuthenticated={setIsMerchantAuthenticated} />} 
-        />
-        <Route 
-          path="/merchant/dashboard" 
-          element={isMerchantAuthenticated ? <MerchantDashboard onLogout={handleMerchantLogout} /> : <Navigate to="/merchant/login" />} 
-        />
-
-        {/* Protected Routes */}
-        <Route 
-          path="/profile" 
-          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/rewards" 
-          element={isAuthenticated ? <RewardsPage /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/transfer" 
-          element={isAuthenticated ? <Transfer /> : <Navigate to="/login" />} 
-        />
-        <Route 
+      <div className="flex flex-col min-h-screen">
+        <NavbarWrapper isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+        <main className="flex-grow">
+          <Routes>
+            <Route 
+              path="/home" 
+              element={<Herosection />} 
+            />
+            <Route 
+              path="/login" 
+              element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
+            />
+            <Route 
+              path="/" 
+              element={<Navigate to="/home" />} 
+            />
+            <Route 
+              path="/dashboard" 
+              element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
+            />
+            
+            {/* Merchant Routes */}
+            <Route path="/merchant" element={<MerchantLanding />} />
+            <Route 
+              path="/merchant/login" 
+              element={isMerchantAuthenticated ? <Navigate to="/merchant/dashboard" /> : <MerchantLogin setIsMerchantAuthenticated={setIsMerchantAuthenticated} />} 
+            />
+            <Route 
+              path="/merchant/register" 
+              element={isMerchantAuthenticated ? <Navigate to="/merchant/dashboard" /> : <MerchantRegister setIsMerchantAuthenticated={setIsMerchantAuthenticated} />} 
+            />
+            {/* The dashboard route needs to handle both the root path and sub-paths */}
+            <Route 
+              path="/merchant/dashboard" 
+              element={isMerchantAuthenticated ? <MerchantDashboard onLogout={handleMerchantLogout} /> : <Navigate to="/merchant/login" />} 
+            />
+            <Route 
+              path="/merchant/dashboard/*" 
+              element={isMerchantAuthenticated ? <MerchantDashboard onLogout={handleMerchantLogout} /> : <Navigate to="/merchant/login" />} 
+            />
+            
+            <Route 
+              path="/profile" 
+              element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/rewards" 
+              element={isAuthenticated ? <RewardsPage /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/wallet/upi/:userId" 
+              element={isAuthenticated ? <UPIWallet /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/wallet/erupee/:userId" 
+              element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
+            />
+            <Route 
           path="/blockchain" 
           element={isAuthenticated ? <BlockchainViewer /> : <Navigate to="/login" />} 
         />
@@ -127,7 +138,10 @@ function App() {
           element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
         />
       </Routes>
-      <ChatButton />
+        </main>
+        <Footer />
+        <ChatButton />
+      </div>
     </Router>
   );
 }

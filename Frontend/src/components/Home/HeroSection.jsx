@@ -69,7 +69,7 @@ export default function Herosection() {
           className="text-center"
         >
           <h1 className="relative z-10 mx-auto max-w-5xl text-blue-700 text-center text-3xl font-bold md:text-5xl lg:text-7xl bg-clip-text  bg-gradient-to-r from-[#0d1152] to-[#4552e3]">
-            {"Financial   freedom   begins  with RupeeFi"
+            {"Financial   freedom   begins  with  RupeeFi"
               .split(" ")
               .map((word, index) => (
                 <motion.span
@@ -103,7 +103,8 @@ export default function Herosection() {
             }}
             className="relative z-10 mx-auto text-blue-700max-w-2xl py-6 text-center text-lg font-normal text-gray-600"
           >
-            Empower your financial journey with smart banking solutions, investment opportunities, and personalized financial insights — all in one secure platform.
+            Despite the Indian government’s efforts, the adoption of India’s Central Bank Digital Currency (CBDC), the e-Rupee, remains limited.
+
           </motion.p>
         </motion.div>
 
