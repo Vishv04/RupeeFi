@@ -329,11 +329,28 @@ const ERupeeWallet = () => {
               {wallet.transactions.map((tx, index) => (
                 <div key={index} className="border-b pb-4">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">{tx.type}</p>
+                    <div className="space-y-1">
+                      <p className="font-medium flex items-center">
+                        <span className={`inline-block w-20 ${
+                          tx.type === 'debit' ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          {tx.type === 'debit' ? 'Sent to:' : 'From:'}
+                        </span>
+                        <span className="ml-2">
+                          {tx.type === 'debit' ? tx.to : tx.from}
+                          <span className="ml-2 text-sm text-gray-500">
+                            ({tx.walletType || 'e-Rupee'})
+                          </span>
+                        </span>
+                      </p>
                       <p className="text-sm text-gray-500">
                         {new Date(tx.timestamp).toLocaleString()}
                       </p>
+                      {tx.note && (
+                        <p className="text-sm text-gray-600 italic">
+                          Note: {tx.note}
+                        </p>
+                      )}
                     </div>
                     <div className={`text-lg font-semibold ${
                       tx.type === 'debit' ? 'text-red-600' : 'text-green-600'

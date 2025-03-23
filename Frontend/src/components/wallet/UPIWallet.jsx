@@ -225,15 +225,31 @@ const UPIWallet = () => {
           {wallet.transactions && wallet.transactions.length > 0 ? (
             <div className="space-y-4">
               {wallet.transactions.map((transaction, index) => (
-                <div key={index} className="border-b pb-2">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{transaction.type}</p>
+                <div key={index} className="border-b pb-4">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <p className="font-medium flex items-center">
+                        <span className={`inline-block w-16 ${
+                          transaction.type === 'debit' ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          {transaction.type === 'debit' ? 'Sent to:' : 'From:'}
+                        </span>
+                        <span className="ml-2">
+                          {transaction.type === 'debit' 
+                            ? (transaction.to || 'eRupee Wallet')
+                            : (transaction.from || 'Unknown')}
+                        </span>
+                      </p>
                       <p className="text-sm text-gray-500">
                         {new Date(transaction.timestamp).toLocaleString()}
                       </p>
+                      {transaction.note && (
+                        <p className="text-sm text-gray-600 italic">
+                          Note: {transaction.note}
+                        </p>
+                      )}
                     </div>
-                    <div className={`font-bold ${
+                    <div className={`text-lg font-semibold ${
                       transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {transaction.type === 'credit' ? '+' : '-'}₹{transaction.amount.toFixed(2)}

@@ -5,9 +5,9 @@ const SpinWheel = () => {
 
   const wheelStyle = {
     position: 'relative',
-    width: '400px', // Fixed size
+    width: '400px',
     height: '400px',
-    margin: '40px auto', // Center horizontally
+    margin: '40px auto',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -15,12 +15,12 @@ const SpinWheel = () => {
 
   const wheelSegmentStyle = (index) => {
     const angle = (360 / 8); // 8 segments
-    const rotation = index * angle;
+    const rotation = index * angle - (angle / 2); // Subtract half segment angle to center
     
     return {
       position: 'absolute',
       width: '50%', // Half of wheel radius
-      height: '2px', // Line height
+      height: '2px',
       transformOrigin: 'left center',
       transform: `rotate(${rotation}deg)`,
       display: 'flex',
@@ -53,7 +53,7 @@ const SpinWheel = () => {
     height: '100%',
     borderRadius: '50%',
     border: '10px solid #333',
-    background: 'conic-gradient(from 0deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEEAD, #D4A5A5, #9B59B6, #3498DB)',
+    background: 'conic-gradient(from -45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEEAD, #D4A5A5, #9B59B6, #3498DB)', // Adjusted starting angle
   };
 
   const pointerStyle = {

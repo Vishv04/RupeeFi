@@ -56,20 +56,20 @@ const RewardsPage = () => {
         {/* Reward Info Cards */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className="p-6 rounded-xl bg-gradient-to-br from-indigo-900/50 to-purple-900/50 border border-indigo-500/20"
+          className="p-6 rounded-xl bg-gradient-to-br from-indigo-900/70 to-purple-900/50 border border-indigo-500/20"
         >
           <h3 className="text-xl font-semibold mb-3 text-indigo-300">Daily Rewards</h3>
-          <p className="text-gray-400">
+          <p className="text-gray-700">
             Make a payment using e-Rupee to earn a free spin! Come back daily for more chances to win.
           </p>
         </motion.div>
 
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className="p-6 rounded-xl bg-gradient-to-br from-orange-900/50 to-red-900/50 border border-orange-500/20"
+          className="p-6 rounded-xl bg-gradient-to-br from-orange-900/70 to-red-900/50 border border-orange-500/20"
         >
           <h3 className="text-xl font-semibold mb-3 text-orange-300">Payment Streaks</h3>
-          <p className="text-gray-400">
+          <p className="text-gray-700">
             Keep your payment streak alive! Pay with e-Rupee for 7 consecutive days to earn ₹7 bonus.
           </p>
         </motion.div>
