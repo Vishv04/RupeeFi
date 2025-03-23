@@ -16,7 +16,7 @@ import ChatButton from './components/chatbot/ChatButton';
 import UPIWallet from './components/wallet/UPIWallet';
 import ERupeeWallet from './components/wallet/ERupeeWallet';
 import BlockchainViewer from './components/BlockchainViewer';
-
+import Transfer from './components/Transfer';
 
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
@@ -94,35 +94,37 @@ function App() {
           path="/merchant/register" 
           element={isMerchantAuthenticated ? <Navigate to="/merchant/dashboard" /> : <MerchantRegister setIsMerchantAuthenticated={setIsMerchantAuthenticated} />} 
         />
-        {/* The dashboard route needs to handle both the root path and sub-paths */}
         <Route 
           path="/merchant/dashboard" 
           element={isMerchantAuthenticated ? <MerchantDashboard onLogout={handleMerchantLogout} /> : <Navigate to="/merchant/login" />} 
         />
-        <Route 
-          path="/merchant/dashboard/*" 
-          element={isMerchantAuthenticated ? <MerchantDashboard onLogout={handleMerchantLogout} /> : <Navigate to="/merchant/login" />} 
-        />
-        
+
+        {/* Protected Routes */}
         <Route 
           path="/profile" 
-          element={isAuthenticated ? <Profile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/rewards" 
           element={isAuthenticated ? <RewardsPage /> : <Navigate to="/login" />} 
         />
         <Route 
-          path="/wallet/upi/:userId" 
-          element={isAuthenticated ? <UPIWallet /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/wallet/erupee/:userId" 
-          element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
+          path="/transfer" 
+          element={isAuthenticated ? <Transfer /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/blockchain" 
           element={isAuthenticated ? <BlockchainViewer /> : <Navigate to="/login" />} 
+        />
+
+        {/* Wallet Routes */}
+        <Route 
+          path="/wallet/upi" 
+          element={isAuthenticated ? <UPIWallet /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/wallet/erupee" 
+          element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
         />
       </Routes>
       <ChatButton />

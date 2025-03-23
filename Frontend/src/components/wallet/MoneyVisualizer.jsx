@@ -19,9 +19,10 @@ const DENOMINATIONS = [
   { value: 1, image: rupee1, type: 'coin' },
 ];
 
-const MoneyVisualizer = ({ amount, onConfirm, onCancel }) => {
+const MoneyVisualizer = ({ amount, onConfirm, onCancel, selectedUser }) => {
   const [denominations, setDenominations] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [confirmClicked, setConfirmClicked] = useState(false);
 
   useEffect(() => {
     calculateDenominations(amount);
@@ -43,11 +44,14 @@ const MoneyVisualizer = ({ amount, onConfirm, onCancel }) => {
   };
 
   const handleConfirm = () => {
+    if (confirmClicked) return; // Prevent double clicks
+    setConfirmClicked(true);
     setIsAnimating(true);
+    
+    // Wait for animation to complete before confirming
     setTimeout(() => {
       onConfirm();
-      setIsAnimating(false);
-    }, 1000);
+    }, 1500);
   };
 
   return (
@@ -62,6 +66,12 @@ const MoneyVisualizer = ({ amount, onConfirm, onCancel }) => {
               ₹{amount.toFixed(2)}
             </p>
           </div>
+          {selectedUser && (
+            <div className="mt-4 text-lg text-gray-600">
+              To: <span className="font-semibold">{selectedUser.name}</span>
+              <div className="text-sm text-gray-500">ID: {selectedUser.erupeeId}</div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap justify-center items-center gap-8 mb-6 py-4 px-2">
@@ -97,15 +107,23 @@ const MoneyVisualizer = ({ amount, onConfirm, onCancel }) => {
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-6 justify-center items-center">
           <button
             onClick={onCancel}
-            className="w-full sm:w-auto px-12 py-4 text-lg border-2 border-gray-300 rounded-xl hover:bg-gray-50 font-medium transition-all duration-300 hover:border-red-300 hover:text-red-500 hover:scale-105"
+            disabled={confirmClicked}
+            className={`w-full sm:w-auto px-12 py-4 text-lg border-2 border-gray-300 rounded-xl font-medium transition-all duration-300 
+              ${confirmClicked 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'hover:bg-gray-50 hover:border-red-300 hover:text-red-500 hover:scale-105'}`}
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
-            className="w-full sm:w-auto px-12 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:from-blue-700 hover:to-purple-700"
+            disabled={confirmClicked}
+            className={`w-full sm:w-auto px-12 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 
+              ${confirmClicked 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'hover:scale-105 hover:shadow-lg'}`}
           >
-            Confirm & Send
+            {confirmClicked ? 'Processing...' : 'Confirm Transfer'}
           </button>
         </div>
       </div>
