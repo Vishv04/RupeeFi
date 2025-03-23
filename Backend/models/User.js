@@ -88,32 +88,20 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  bankAccount: {
-    accountNumber: String,
-    ifscCode: String,
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-  },
   scratchCardsAvailable: {
     type: Number,
     default: 20,
   },
-  totalScratchCardsUsed: {
-    type: Number,
-    default: 0,
+  isMerchant: {
+    type: Boolean,
+    default: false,
   },
-  lastScratchCardDate: {
-    type: Date,
-    default: null,
-  },
-  transactionCount: {  // Added to track transfers for rewards
-    type: Number,
-    default: 0,
-  },
-}, {
-  timestamps: true,
+  eRupeeId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  }
 });
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+export default User;
