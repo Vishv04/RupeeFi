@@ -1,11 +1,8 @@
 import express from "express";
-// import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import dbConnect from "./config/database.js";
-// import { cloudinaryConnect } from "./config/cloudinary.js";
 import blockchainRoutes from "./routes/blockchain.js";
-// Import routes
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import paymentRoutes from "./routes/payment.js";
@@ -20,23 +17,17 @@ const app = express();
 
 // Database connection
 dbConnect();
-// cloudinaryConnect();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-  res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-  next();
-});
-app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
 
+// CORS headers
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
@@ -48,26 +39,14 @@ app.use("/api/merchant", merchantRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/blockchain", blockchainRoutes);
-app.use("/api/rewards", rewardsRoutes);
+
 // Error handling middleware
-
 app.use((err, req, res, next) => {
-  const status = err.status || 500;
-  const message = err.message || "Something went wrong";
-  res.status(status).json({
-    success: false,
-    status,
-    message,
-  });
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.get("/", (req, res) => {
-  return res.json({
-    success: true,
-    message: "Boooooooooom, your server is started",
-  });
-});
-
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

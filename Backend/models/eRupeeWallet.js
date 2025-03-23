@@ -1,4 +1,4 @@
-// models/ERupeeWallet.js
+// models/eRupeeWallet.js
 import mongoose from 'mongoose';
 
 const erupeeWalletSchema = new mongoose.Schema({
@@ -25,4 +25,6 @@ const erupeeWalletSchema = new mongoose.Schema({
     ],
 });
 
-export default mongoose.model('ERupeeWallet', erupeeWalletSchema);
+const eRupeeWallet = mongoose.model('eRupeeWallet', erupeeWalletSchema);
+
+export default eRupeeWallet;

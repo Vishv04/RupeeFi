@@ -60,18 +60,31 @@ router.get('/balances/:userId', protect, async (req, res) => {
     // Initialize wallets if they don't exist
     await initializeWallets(req.params.userId);
 
-    const profile = await Profile.findOne({ user: req.params.userId })
-      .populate('upiWalletId')
-      .populate('eRupeeWalletId');
+    const profile = await Profile.findOne({ user: req.params.userId });
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get UPI wallet
+    const upiWallet = await UpiWallet.findById(profile.upiWalletId);
+    if (!upiWallet) {
+      return res.status(404).json({ message: 'UPI wallet not found' });
+    }
+
+    // Get eRupee wallet
+    const eRupeeWallet = await ERupeeWallet.findById(profile.eRupeeWalletId);
+    if (!eRupeeWallet) {
+      return res.status(404).json({ message: 'eRupee wallet not found' });
+    }
 
     res.json({
       upiWallet: { 
-        balance: profile.upiWalletId?.balance || 0,
-        id: profile.upiWalletId?._id 
+        balance: upiWallet.balance || 0,
+        id: upiWallet._id 
       },
       eRupeeWallet: { 
-        balance: profile.eRupeeWalletId?.balance || 0,
-        id: profile.eRupeeWalletId?._id 
+        balance: eRupeeWallet.balance || 0,
+        id: eRupeeWallet._id 
       }
     });
   } catch (error) {
@@ -114,9 +127,7 @@ router.get('/erupee/:userId', protect, async (req, res) => {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
-    const wallet = await ERupeeWallet.findById(profile.eRupeeWalletId)
-      .populate('transactions.from', 'name')
-      .populate('transactions.to', 'name');
+    const wallet = await ERupeeWallet.findById(profile.eRupeeWalletId);
     
     if (!wallet) {
       return res.status(404).json({ message: 'Wallet not found' });
@@ -128,9 +139,23 @@ router.get('/erupee/:userId', protect, async (req, res) => {
       await profile.save();
     }
     
+    // Format transactions for frontend
+    const formattedTransactions = wallet.transactions.map(tx => ({
+      _id: tx._id,
+      amount: tx.amount,
+      type: tx.type.toUpperCase(),
+      description: tx.note,
+      timestamp: tx.timestamp,
+      from: tx.from,
+      to: tx.to
+    }));
+    
     // Include erupeeId from profile in the response
-    const walletData = wallet.toObject();
-    walletData.erupeeId = profile.erupeeId;
+    const walletData = {
+      balance: wallet.balance,
+      transactions: formattedTransactions,
+      erupeeId: profile.erupeeId
+    };
     
     res.json(walletData);
   } catch (error) {
