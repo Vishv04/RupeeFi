@@ -143,7 +143,7 @@ router.get('/erupee/:userId', protect, async (req, res) => {
     const formattedTransactions = wallet.transactions.map(tx => ({
       _id: tx._id,
       amount: tx.amount,
-      type: tx.type.toUpperCase(),
+      type: tx.type,
       description: tx.note,
       timestamp: tx.timestamp,
       from: tx.from,
@@ -197,7 +197,7 @@ router.post('/transfer-to-erupee', protect, async (req, res) => {
           $inc: { balance: -amount },
           $push: {
             transactions: {
-              type: 'DEBIT',
+              type: 'debit',
               amount: amount,
               timestamp: new Date(),
               description: 'Transfer to e-Rupee wallet'
@@ -214,7 +214,7 @@ router.post('/transfer-to-erupee', protect, async (req, res) => {
           $inc: { balance: amount },
           $push: {
             transactions: {
-              type: 'CREDIT',
+              type: 'credit',
               amount: amount,
               timestamp: new Date(),
               description: 'Received from UPI wallet'
