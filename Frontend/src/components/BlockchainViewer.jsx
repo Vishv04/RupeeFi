@@ -5,7 +5,6 @@ const BlockchainViewer = () => {
   const [chain, setChain] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [expandedBlock, setExpandedBlock] = useState(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -63,7 +62,7 @@ const BlockchainViewer = () => {
     const startY = ctx.canvas.height / 2 - blockHeight / 2;
 
     blocks.forEach((block, index) => {
-      ctx.fillStyle = expandedBlock === index ? '#e3f2fd' : '#ffffff';
+      ctx.fillStyle = '#e3f2fd';
       ctx.strokeStyle = '#2196f3';
       ctx.lineWidth = 2;
       
@@ -75,11 +74,11 @@ const BlockchainViewer = () => {
       ctx.stroke();
 
       ctx.fillStyle = '#1e40af';
-      ctx.font = '14px Arial';
-      ctx.fillText(`Block ${block.index}`, x + 10, startY + 25);
-      ctx.font = '12px Arial';
+      ctx.font = '22px Arial';
+      ctx.fillText(`Block `, x + 10, startY + 25);
+      ctx.font = '18px Arial';
       ctx.fillStyle = '#64748b';
-      ctx.fillText(`${block.transactions.length} tx`, x + 10, startY + 45);
+      ctx.fillText(`${block.transactions.length} tx`, x + 10, startY + 55);
 
       if (index < blocks.length - 1) {
         ctx.beginPath();
@@ -112,7 +111,7 @@ const BlockchainViewer = () => {
     ctx.scale(dpr, dpr);
     
     drawBlockchain(ctx, chain);
-  }, [chain, expandedBlock]);
+  }, [chain]);
 
   if (loading) {
     return (
@@ -151,7 +150,7 @@ const BlockchainViewer = () => {
         <canvas
           ref={canvasRef}
           className="bg-white rounded-lg shadow-md p-4"
-          style={{ minWidth: '100%' }}
+          style={{ minWidth: '100%', fontSize: '16px' }}
         />
       </div>
 
@@ -161,83 +160,61 @@ const BlockchainViewer = () => {
             key={block.hash}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
-            <div
-              className="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-              onClick={() =>
-                setExpandedBlock(expandedBlock === index ? null : index)
-              }
-            >
+            <div className="p-4 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                    Block {block.index}
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-lg font-medium">
+                    Block {index + 1}
                   </span>
-                  <span className="text-gray-500 text-sm">
+                  <span className="text-gray-500 text-lg">
                     {formatTimestamp(block.timestamp)}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-lg text-gray-500">
                     {block.transactions.length} transactions
                   </span>
-                  <svg
-                    className={`w-5 h-5 transform transition-transform ${
-                      expandedBlock === index ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
                 </div>
               </div>
             </div>
 
-            {expandedBlock === index && (
-              <div className="p-4 border-t border-gray-200">
-                <div className="mb-4">
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Hash: </span>
-                    <span className="font-mono">{block.hash}</span>
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Previous Hash: </span>
-                    <span className="font-mono">{block.previousHash}</span>
-                  </p>
-                </div>
+            <div className="p-4 border-t border-gray-200">
+              <div className="mb-4">
+                <p className="text-lg text-gray-600">
+                  <span className="font-medium">Hash: </span>
+                  <span className="font-mono">{block.hash}</span>
+                </p>
+                <p className="text-lg text-gray-600">
+                  <span className="font-medium">Previous Hash: </span>
+                  <span className="font-mono">{block.previousHash}</span>
+                </p>
+              </div>
 
-                <div className="space-y-4">
-                  {block.transactions.map((tx, txIndex) => (
-                    <div key={txIndex} className="bg-gray-50 p-4 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            From: {tx.sender || 'Unknown'}
-                          </p>
-                          <p className="text-sm font-medium text-gray-900">
-                            To: {tx.receiver || 'Unknown'}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-green-600">
-                            {formatAmount(tx.amount)}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {formatTimestamp(tx.timestamp)}
-                          </p>
-                        </div>
+              <div className="space-y-4">
+                {block.transactions.map((tx, txIndex) => (
+                  <div key={txIndex} className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <p className="text-lg font-medium text-gray-900">
+                          From: {tx.sender || 'Unknown'}
+                        </p>
+                        <p className="text-lg font-medium text-gray-900">
+                          To: {tx.receiver || 'Unknown'}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-bold text-green-600">
+                          {formatAmount(tx.amount)}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {formatTimestamp(tx.timestamp)}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         ))}
       </div>

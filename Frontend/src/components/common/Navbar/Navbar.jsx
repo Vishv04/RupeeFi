@@ -145,10 +145,12 @@ function Navbar({ isAuthenticated, onLogout }) {
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center space-x-7">
-            <Link to="/help" className="text-gray-700 hover:text-black transition-colors duration-300 relative group">
-              Help
-              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
-            </Link>
+            {isAuthenticated && (
+              <Link to="/dashboard" className="text-gray-700 hover:text-black transition-colors duration-300 relative group">
+                Dashboard
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            )}
             <Link to="/blog" className="text-gray-700 hover:text-black transition-colors duration-300 relative group">
               Blog
               <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
