@@ -25,6 +25,4 @@ const erupeeWalletSchema = new mongoose.Schema({
     ],
 });
 
-const eRupeeWallet = mongoose.model('eRupeeWallet', erupeeWalletSchema);
-
-export default eRupeeWallet;
+export default mongoose.model('ERupeeWallet', erupeeWalletSchema);
