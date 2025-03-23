@@ -2,6 +2,7 @@ import Userkyc from '../models/Userkyc.js';
 import User from '../models/User.js';
 import { sendEmail } from '../utils/email.js';
 import { generateOTP } from '../utils/otp.js';
+import { createLogger } from 'vite';
 
 // Check KYC status
 export const checkKYCStatus = async (req, res) => {
@@ -28,10 +29,9 @@ export const checkKYCStatus = async (req, res) => {
 export const submitKYCDetails = async (req, res) => {
   try {
     console.log('Received KYC submission request');
-    console.log('Request body:', req.body);
-    console.log('Request files:', req.files);
     
     const { aadhaarNumber, contactNumber, panNumber } = req.body;
+    console.log(req.user);
     const userId = req.user._id;
 
     console.log('User ID from token:', userId);
@@ -71,6 +71,7 @@ export const submitKYCDetails = async (req, res) => {
     console.log('Saving KYC record:', kyc);
     await kyc.save();
 
+    console.log(kyc);
     res.status(201).json({
       message: 'KYC details submitted successfully',
       kycId: kyc._id

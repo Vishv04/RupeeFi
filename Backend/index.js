@@ -6,7 +6,7 @@ import fileUpload from "express-fileupload";
 import dbConnect from "./config/database.js";
 import fs from 'fs';
 import path from 'path';
-// import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'url';
 
 // Get directory name (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
