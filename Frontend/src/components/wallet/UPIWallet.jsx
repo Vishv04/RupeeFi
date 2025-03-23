@@ -9,8 +9,10 @@ const UPIWallet = () => {
     transactions: []
   });
   const [amount, setAmount] = useState('');
+  const [transferAmount, setTransferAmount] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [transferStatus, setTransferStatus] = useState('');
 
   useEffect(() => {
     fetchWalletDetails();
@@ -89,6 +91,37 @@ const UPIWallet = () => {
     }
   };
 
+  const handleTransferToERupee = async (e) => {
+    e.preventDefault();
+    setTransferStatus('');
+    setError(null);
+
+    if (!transferAmount || parseFloat(transferAmount) <= 0) {
+      setError('Please enter a valid amount');
+      return;
+    }
+
+    if (parseFloat(transferAmount) > wallet.balance) {
+      setError('Insufficient balance');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/wallet/transfer-to-erupee`,
+        { amount: parseFloat(transferAmount) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setTransferStatus('Transfer successful!');
+      setTransferAmount('');
+      fetchWalletDetails();
+    } catch (error) {
+      setError(error.response?.data?.error || 'Transfer failed');
+    }
+  };
+
   if (loading) return <div className="text-center p-4">Loading...</div>;
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
@@ -101,50 +134,87 @@ const UPIWallet = () => {
         </div>
 
         {/* Add Money Form */}
-        <form onSubmit={handleAddMoney} className="mt-4">
-          <div className="flex gap-4">
+        <form onSubmit={handleAddMoney} className="mb-6">
+          <div className="mb-4">
+            <label htmlFor="amount" className="block text-gray-700 font-medium mb-2">
+              Add Money
+            </label>
             <input
               type="number"
+              id="amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter amount"
-              className="flex-1 p-2 border rounded"
               min="1"
+              step="0.01"
               required
             />
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              disabled={!amount || amount <= 0}
-            >
-              Add Money
-            </button>
           </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Add Money
+          </button>
         </form>
-      </div>
 
-      {/* Transaction History */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-xl font-semibold mb-4">Transaction History</h3>
-        <div className="space-y-4">
-          {wallet.transactions.map((tx) => (
-            <div key={tx._id} className="border-b pb-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium">
-                    {tx.type === 'credit' ? 'Received' : 'Sent'}
-                  </p>
-                  <p className="text-sm text-gray-600">{tx.description}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(tx.timestamp).toLocaleString()}
-                  </p>
+        {/* Transfer to e-Rupee Form */}
+        <form onSubmit={handleTransferToERupee} className="mb-6">
+          <div className="mb-4">
+            <label htmlFor="transferAmount" className="block text-gray-700 font-medium mb-2">
+              Transfer to e-Rupee Wallet
+            </label>
+            <input
+              type="number"
+              id="transferAmount"
+              value={transferAmount}
+              onChange={(e) => setTransferAmount(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter amount to transfer"
+              min="1"
+              step="0.01"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Transfer to e-Rupee
+          </button>
+        </form>
+
+        {transferStatus && (
+          <div className="text-green-600 text-center mb-4">{transferStatus}</div>
+        )}
+
+        {/* Transaction History */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-4">Transaction History</h3>
+          {wallet.transactions && wallet.transactions.length > 0 ? (
+            <div className="space-y-4">
+              {wallet.transactions.map((transaction, index) => (
+                <div key={index} className="border-b pb-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{transaction.type}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(transaction.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className={`font-bold ${
+                      transaction.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {transaction.type === 'CREDIT' ? '+' : '-'}₹{transaction.amount.toFixed(2)}
+                    </div>
+                  </div>
                 </div>
-                <div className={`font-bold ${tx.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                  {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toFixed(2)}
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <p className="text-gray-500">No transactions yet</p>
+          )}
         </div>
       </div>
     </div>

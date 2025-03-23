@@ -17,6 +17,7 @@ const initializeWallets = async (userId) => {
       profile = new Profile({
         user: userId,
         qrCode: `USER_${userId}_${Date.now()}`, // Generate a proper QR code in production
+        erupeeId: `ERUP${userId.toString().slice(-6)}${Date.now().toString().slice(-4)}` // Generate unique erupeeId
       });
     }
 
@@ -38,6 +39,11 @@ const initializeWallets = async (userId) => {
         transactions: []
       });
       profile.eRupeeWalletId = eRupeeWallet._id;
+    }
+
+    // Ensure profile has an erupeeId
+    if (!profile.erupeeId) {
+      profile.erupeeId = `ERUP${userId.toString().slice(-6)}${Date.now().toString().slice(-4)}`;
     }
 
     await profile.save();
@@ -100,6 +106,9 @@ router.get('/upi/:userId', protect, async (req, res) => {
 // Get eRupee wallet details
 router.get('/erupee/:userId', protect, async (req, res) => {
   try {
+    // Initialize wallets if they don't exist
+    await initializeWallets(req.params.userId);
+
     const profile = await Profile.findOne({ user: req.params.userId });
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
@@ -112,8 +121,18 @@ router.get('/erupee/:userId', protect, async (req, res) => {
     if (!wallet) {
       return res.status(404).json({ message: 'Wallet not found' });
     }
+
+    // Ensure profile has an erupeeId
+    if (!profile.erupeeId) {
+      profile.erupeeId = `ERUP${req.params.userId.toString().slice(-6)}${Date.now().toString().slice(-4)}`;
+      await profile.save();
+    }
     
-    res.json(wallet);
+    // Include erupeeId from profile in the response
+    const walletData = wallet.toObject();
+    walletData.erupeeId = profile.erupeeId;
+    
+    res.json(walletData);
   } catch (error) {
     console.error('Error fetching eRupee wallet:', error);
     res.status(500).json({ message: 'Server error' });
@@ -131,33 +150,49 @@ router.post('/transfer-to-erupee', protect, async (req, res) => {
     session.startTransaction();
 
     try {
-      // Get user's wallets
-      const profile = await Profile.findById(userId).session(session);
-      
+      // Get user's profile
+      const profile = await Profile.findOne({ user: userId })
+        .populate('upiWalletId')
+        .populate('eRupeeWalletId')
+        .session(session);
+
+      if (!profile) {
+        throw new Error('Profile not found');
+      }
+
       // Check UPI balance
       if (profile.upiWalletId.balance < amount) {
         throw new Error('Insufficient UPI balance');
       }
 
-      // Update UPI balance
+      // Update UPI wallet
       await UpiWallet.findByIdAndUpdate(
-        profile.upiWalletId,
-        { $inc: { balance: -amount } },
+        profile.upiWalletId._id,
+        {
+          $inc: { balance: -amount },
+          $push: {
+            transactions: {
+              type: 'DEBIT',
+              amount: amount,
+              timestamp: new Date(),
+              description: 'Transfer to e-Rupee wallet'
+            }
+          }
+        },
         { session }
       );
 
-      // Update e-Rupee balance
+      // Update e-Rupee wallet
       await ERupeeWallet.findByIdAndUpdate(
-        profile.eRupeeWalletId,
-        { 
+        profile.eRupeeWalletId._id,
+        {
           $inc: { balance: amount },
           $push: {
             transactions: {
-              type: 'UPI_TO_ERUPEE',
+              type: 'CREDIT',
               amount: amount,
               timestamp: new Date(),
-              status: 'completed',
-              note: 'Transferred from UPI wallet'
+              description: 'Received from UPI wallet'
             }
           }
         },

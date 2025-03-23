@@ -3,7 +3,14 @@ import User from '../models/User.js';
 // Get available spins
 export const getSpinsAvailable = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ 
         success: false,
@@ -19,7 +26,7 @@ export const getSpinsAvailable = async (req, res) => {
     console.error('Error fetching spins:', error);
     res.status(500).json({ 
       success: false,
-      message: 'Server error' 
+      message: 'Server error while fetching spins'
     });
   }
 };

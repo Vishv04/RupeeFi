@@ -9,16 +9,20 @@ export const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
+      const user = await User.findById(decoded.id).select('-password');
+      
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+
+      req.user = user;
       next();
     } catch (error) {
       console.error('Auth error:', error);
-      res.status(401).json({ message: 'Not authorized' });
+      return res.status(401).json({ message: 'Not authorized' });
     }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+  } else {
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
@@ -30,31 +34,22 @@ export const authMerchant = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: 'No authentication token, authorization denied' });
     }
-    
+
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Check if merchant id exists in the decoded token
-    if (!decoded.merchantId) {
-      return res.status(401).json({ message: 'Not authorized as a merchant' });
-    }
-    
-    // Find merchant by id
-    const merchant = await Merchant.findById(decoded.merchantId).select('-password');
+    // Get merchant from the token
+    const merchant = await Merchant.findById(decoded.id).select('-password');
     
     if (!merchant) {
-      return res.status(401).json({ message: 'Token is not valid' });
+      return res.status(401).json({ message: 'Merchant not found' });
     }
-    
-    // Add merchant to request object
+
     req.merchant = merchant;
-    req.merchantId = merchant._id;
-    
     next();
   } catch (error) {
-    console.error('Merchant authentication error:', error);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
 
-export default protect; 
+export default protect;
