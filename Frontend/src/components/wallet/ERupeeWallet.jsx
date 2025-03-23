@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import MoneyVisualizer from './MoneyVisualizer';
 
 const ERupeeWallet = () => {
+  const { userId } = useParams();
+  const navigate = useNavigate();
   const [wallet, setWallet] = useState({
     balance: 0,
     transactions: [],
@@ -20,11 +23,27 @@ const ERupeeWallet = () => {
   const [transferStatus, setTransferStatus] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showMoneyVisualizer, setShowMoneyVisualizer] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
-    fetchWalletDetails();
-  }, []);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const currentUserId = currentUser?._id;
+    
+    // If no userId provided or matches current user, use current user's wallet
+    if (!userId) {
+      if (currentUserId) {
+        navigate(`/wallet/erupee/${currentUserId}`, { replace: true });
+      } else {
+        setError('User not authenticated');
+        setLoading(false);
+      }
+    } else {
+      // Set view mode if viewing someone else's wallet
+      setViewMode(currentUserId && userId !== currentUserId);
+      fetchWalletDetails();
+    }
+  }, [userId, navigate]);
 
   const fetchWalletDetails = async () => {
     try {
@@ -35,15 +54,8 @@ const ERupeeWallet = () => {
         return;
       }
 
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user._id) {
-        setError('User information not found');
-        setLoading(false);
-        return;
-      }
-
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/wallet/erupee/${user._id}`,
+        `${import.meta.env.VITE_API_URL}/api/wallet/erupee/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -228,81 +240,85 @@ const ERupeeWallet = () => {
     <div className="min-h-screen bg-gray-100 pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-6">e-Rupee Wallet</h2>
+          <h2 className="text-2xl font-bold mb-6">
+            e-Rupee Wallet {viewMode && <span className="text-sm font-normal text-gray-500">(View Only)</span>}
+          </h2>
           
           {/* Balance Display */}
           <div className="bg-indigo-50 rounded-lg p-6 mb-6">
             <h3 className="text-lg font-semibold text-indigo-900 mb-2">Current Balance</h3>
             <p className="text-4xl font-bold text-indigo-600">₹{wallet.balance.toFixed(2)}</p>
-            <p className="text-sm text-indigo-500 mt-2">Your e-Rupee ID: {wallet.erupeeId}</p>
+            <p className="text-sm text-indigo-500 mt-2">e-Rupee ID: {wallet.erupeeId}</p>
           </div>
 
-          {/* Transfer Form */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Send e-Rupee</h3>
-            <form onSubmit={handleTransfer} className="space-y-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search recipient by name"
-                  value={transferData.searchQuery}
-                  onChange={handleSearch}
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-                {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg">
-                    {suggestions.map((user, index) => (
-                      <div
-                        key={index}
-                        className="p-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => selectUser(user)}
-                      >
-                        <div className="font-medium">{user.name}</div>
-                        <div className="text-sm text-gray-500">ID: {user.erupeeId}</div>
-                      </div>
-                    ))}
+          {/* Only show transfer form if not in view mode */}
+          {!viewMode && (
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Send e-Rupee</h3>
+              <form onSubmit={handleTransfer} className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search recipient by name"
+                    value={transferData.searchQuery}
+                    onChange={handleSearch}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg">
+                      {suggestions.map((user, index) => (
+                        <div
+                          key={index}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => selectUser(user)}
+                        >
+                          <div className="font-medium">{user.name}</div>
+                          <div className="text-sm text-gray-500">ID: {user.erupeeId}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {selectedUser && (
+                  <div className="bg-blue-50 p-3 rounded">
+                    <p className="text-sm text-blue-800">
+                      Selected: {selectedUser.name} (ID: {selectedUser.erupeeId})
+                    </p>
                   </div>
                 )}
-              </div>
 
-              {selectedUser && (
-                <div className="bg-blue-50 p-3 rounded">
-                  <p className="text-sm text-blue-800">
-                    Selected: {selectedUser.name} (ID: {selectedUser.erupeeId})
-                  </p>
+                <div>
+                  <input
+                    type="number"
+                    placeholder="Amount"
+                    value={transferData.amount}
+                    onChange={(e) => setTransferData(prev => ({ ...prev, amount: e.target.value }))}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    min="0"
+                    step="0.01"
+                  />
                 </div>
-              )}
 
-              <div>
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={transferData.amount}
-                  onChange={(e) => setTransferData(prev => ({ ...prev, amount: e.target.value }))}
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  min="0"
-                  step="0.01"
-                />
-              </div>
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors"
+                >
+                  Send
+                </button>
 
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors"
-              >
-                Send
-              </button>
-
-              {transferStatus && (
-                <div className={`mt-4 p-3 rounded ${
-                  transferStatus.includes('successful') 
-                    ? 'bg-green-50 text-green-800' 
-                    : 'bg-red-50 text-red-800'
-                }`}>
-                  {transferStatus}
-                </div>
-              )}
-            </form>
-          </div>
+                {transferStatus && (
+                  <div className={`mt-4 p-3 rounded ${
+                    transferStatus.includes('successful') 
+                      ? 'bg-green-50 text-green-800' 
+                      : 'bg-red-50 text-red-800'
+                  }`}>
+                    {transferStatus}
+                  </div>
+                )}
+              </form>
+            </div>
+          )}
         </div>
 
         {/* Recent Transactions */}

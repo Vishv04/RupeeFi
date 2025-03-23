@@ -2,6 +2,7 @@ import mongoose from 'mongoose'; // Import mongoose
 import Profile from '../models/Profile.js';
 import UpiWallet from '../models/upiWallet.js';
 import ERupeeWallet from '../models/eRupeeWallet.js';
+import User from '../models/User.js';
 
 const initializeWallets = async (userId) => {
     try {
@@ -231,4 +232,32 @@ export const transferToERupee = async (req, res) => {
     }
 };
 
-export default { getBalances, getUpiWallet, getERupeeWallet, transferToERupee };
+export const initializeWalletsForUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+    
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Try to initialize both wallets
+    const profile = await initializeWallets(userId);
+    
+    res.status(200).json({ 
+      message: 'Wallets initialized successfully',
+      upiWalletId: profile.upiWalletId,
+      eRupeeWalletId: profile.eRupeeWalletId
+    });
+  } catch (error) {
+    console.error('Error initializing wallets:', error);
+    res.status(500).json({ message: 'Server error during wallet initialization' });
+  }
+};
+
+export default { getBalances, getUpiWallet, getERupeeWallet, transferToERupee, initializeWalletsForUser };

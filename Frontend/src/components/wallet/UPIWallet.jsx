@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const UPIWallet = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const [wallet, setWallet] = useState({
     balance: 0,
     transactions: []
@@ -13,14 +14,36 @@ const UPIWallet = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [transferStatus, setTransferStatus] = useState('');
+  const [viewMode, setViewMode] = useState(false);
 
   useEffect(() => {
-    fetchWalletDetails();
-  }, [userId]);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const currentUserId = currentUser?._id;
+    
+    // If no userId provided or matches current user, use current user's wallet
+    if (!userId) {
+      if (currentUserId) {
+        navigate(`/wallet/upi/${currentUserId}`, { replace: true });
+      } else {
+        setError('User not authenticated');
+        setLoading(false);
+      }
+    } else {
+      // Set view mode if viewing someone else's wallet
+      setViewMode(currentUserId && userId !== currentUserId);
+      fetchWalletDetails();
+    }
+  }, [userId, navigate]);
 
   const fetchWalletDetails = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/wallet/upi/${userId}`,
         {
@@ -128,62 +151,69 @@ const UPIWallet = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 pt-32">
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-2xl font-bold mb-4">UPI Wallet</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          UPI Wallet {viewMode && <span className="text-sm font-normal text-gray-500">(View Only)</span>}
+        </h2>
         <div className="text-3xl font-bold text-gray-900 mb-6">
           ₹{wallet.balance.toFixed(2)}
         </div>
 
-        {/* Add Money Form */}
-        <form onSubmit={handleAddMoney} className="mb-6">
-          <div className="mb-4">
-            <label htmlFor="amount" className="block text-gray-700 font-medium mb-2">
-              Add Money
-            </label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter amount"
-              min="1"
-              step="0.01"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Add Money
-          </button>
-        </form>
+        {/* Only show add money and transfer forms if not in view mode */}
+        {!viewMode && (
+          <>
+            {/* Add Money Form */}
+            <form onSubmit={handleAddMoney} className="mb-6">
+              <div className="mb-4">
+                <label htmlFor="amount" className="block text-gray-700 font-medium mb-2">
+                  Add Money
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter amount"
+                  min="1"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Add Money
+              </button>
+            </form>
 
-        {/* Transfer to e-Rupee Form */}
-        <form onSubmit={handleTransferToERupee} className="mb-6">
-          <div className="mb-4">
-            <label htmlFor="transferAmount" className="block text-gray-700 font-medium mb-2">
-              Transfer to e-Rupee Wallet
-            </label>
-            <input
-              type="number"
-              id="transferAmount"
-              value={transferAmount}
-              onChange={(e) => setTransferAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter amount to transfer"
-              min="1"
-              step="0.01"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            Transfer to e-Rupee
-          </button>
-        </form>
+            {/* Transfer to e-Rupee Form */}
+            <form onSubmit={handleTransferToERupee} className="mb-6">
+              <div className="mb-4">
+                <label htmlFor="transferAmount" className="block text-gray-700 font-medium mb-2">
+                  Transfer to e-Rupee Wallet
+                </label>
+                <input
+                  type="number"
+                  id="transferAmount"
+                  value={transferAmount}
+                  onChange={(e) => setTransferAmount(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter amount to transfer"
+                  min="1"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                Transfer to e-Rupee
+              </button>
+            </form>
+          </>
+        )}
 
         {transferStatus && (
           <div className="text-green-600 text-center mb-4">{transferStatus}</div>

@@ -31,6 +31,22 @@ function Login({ setIsAuthenticated }) {
         const user = response.data.user;
         localStorage.setItem('user', JSON.stringify(user));
         
+        // Initialize wallets for the user
+        try {
+          await axios.post(
+            `${import.meta.env.VITE_API_URL}/api/wallet/initialize`,
+            { userId: user._id },
+            {
+              headers: { Authorization: `Bearer ${response.data.token}` }
+            }
+          );
+          console.log('Wallets initialized successfully');
+        } catch (walletError) {
+          console.warn('Wallet initialization warning:', walletError);
+          // Continue even if wallet initialization fails
+          // The wallet might already exist or will be created on first access
+        }
+        
         // Check if this user is registered as a merchant
         if (user.isMerchant) {
           console.log('User is registered as a merchant, attempting to refresh merchant token');
@@ -55,8 +71,6 @@ function Login({ setIsAuthenticated }) {
             }
           } catch (merchantError) {
             console.error('Error refreshing merchant token:', merchantError);
-            // Even if token refresh fails, we still set isMerchant to true
-            // The Profile component will handle re-authentication if needed
           }
         }
         
