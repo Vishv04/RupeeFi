@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 const BlockchainViewer = () => {
@@ -6,6 +6,7 @@ const BlockchainViewer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedBlock, setExpandedBlock] = useState(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const fetchChain = async () => {
@@ -53,6 +54,66 @@ const BlockchainViewer = () => {
     }).format(amount);
   };
 
+  const drawBlockchain = (ctx, blocks) => {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    const blockWidth = 160;
+    const blockHeight = 80;
+    const spacing = 40;
+    const startX = 50;
+    const startY = ctx.canvas.height / 2 - blockHeight / 2;
+
+    blocks.forEach((block, index) => {
+      ctx.fillStyle = expandedBlock === index ? '#e3f2fd' : '#ffffff';
+      ctx.strokeStyle = '#2196f3';
+      ctx.lineWidth = 2;
+      
+      const x = startX + index * (blockWidth + spacing);
+      
+      ctx.beginPath();
+      ctx.roundRect(x, startY, blockWidth, blockHeight, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#1e40af';
+      ctx.font = '14px Arial';
+      ctx.fillText(`Block ${block.index}`, x + 10, startY + 25);
+      ctx.font = '12px Arial';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`${block.transactions.length} tx`, x + 10, startY + 45);
+
+      if (index < blocks.length - 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.moveTo(x + blockWidth, startY + blockHeight / 2);
+        ctx.lineTo(x + blockWidth + spacing, startY + blockHeight / 2);
+        ctx.lineTo(x + blockWidth + spacing - 10, startY + blockHeight / 2 - 10);
+        ctx.moveTo(x + blockWidth + spacing, startY + blockHeight / 2);
+        ctx.lineTo(x + blockWidth + spacing - 10, startY + blockHeight / 2 + 10);
+        ctx.stroke();
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!chain.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = Math.max(window.innerWidth - 100, chain.length * 200);
+    canvas.height = 150;
+    
+    const dpr = window.devicePixelRatio || 1;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+    canvas.width *= dpr;
+    canvas.height *= dpr;
+    ctx.scale(dpr, dpr);
+    
+    drawBlockchain(ctx, chain);
+  }, [chain, expandedBlock]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 p-8">
@@ -81,10 +142,18 @@ const BlockchainViewer = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 mt-18">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+    <div className="min-h-screen bg-gray-100 p-8 pt-30">
+      {/* <h1 className="text-3xl font-bold text-gray-800 mb-8">
         Blockchain Explorer
-      </h1>
+      </h1> */}
+
+      <div className="mb-8 overflow-x-auto">
+        <canvas
+          ref={canvasRef}
+          className="bg-white rounded-lg shadow-md p-4"
+          style={{ minWidth: '100%' }}
+        />
+      </div>
 
       <div className="space-y-6">
         {chain.map((block, index) => (
