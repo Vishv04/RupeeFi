@@ -9,6 +9,7 @@ import paymentRoutes from "./routes/payment.js";
 import merchantRoutes from "./routes/merchant.js";
 import rewardsRoutes from "./routes/rewards.js";
 import walletRoutes from "./routes/wallet.js";
+import streakRewardsRoutes from "./routes/streakRewards.js";
 
 // Configure env
 dotenv.config();
@@ -39,6 +40,7 @@ app.use("/api/merchant", merchantRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/blockchain", blockchainRoutes);
+app.use("/api/streak", streakRewardsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

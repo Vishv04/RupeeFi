@@ -1,4 +1,6 @@
 import User from '../models/User.js';
+import ERupeeWallet from '../models/eRupeeWallet.js';
+import Profile from '../models/Profile.js';
 
 // Get available spins
 export const getSpinsAvailable = async (req, res) => {
@@ -34,7 +36,7 @@ export const getSpinsAvailable = async (req, res) => {
 // Spin the wheel
 export const spinWheel = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ 
         success: false,
@@ -49,30 +51,30 @@ export const spinWheel = async (req, res) => {
       });
     }
 
-    // Define rewards and their probabilities
+    // Define rewards without probabilities
     const rewards = [
-      { value: '₹5', type: 'cashback', amount: 5, probability: 0.25 },
-      { value: '₹10', type: 'cashback', amount: 10, probability: 0.20 },
-      { value: '₹15', type: 'cashback', amount: 15, probability: 0.15 },
-      { value: '₹20', type: 'cashback', amount: 20, probability: 0.10 },
-      { value: '₹25', type: 'cashback', amount: 25, probability: 0.05 },
-      { value: '₹50', type: 'cashback', amount: 50, probability: 0.02 },
-      { value: '10% Off', type: 'discount', amount: 10, probability: 0.13 },
-      { value: 'Try Again', type: 'none', amount: 0, probability: 0.10 }
+      { value: '₹5', type: 'cashback', amount: 5 },
+      { value: '₹10', type: 'cashback', amount: 10 },
+      { value: '₹15', type: 'cashback', amount: 15 },
+      { value: '₹20', type: 'cashback', amount: 20 },
+      { value: '₹25', type: 'cashback', amount: 25 },
+      { value: '₹50', type: 'cashback', amount: 50 },
+      { value: '10% Off', type: 'discount', amount: 10 },
+      { value: 'Try Again', type: 'none', amount: 0 }
     ];
 
-    // Select reward based on probability
-    const random = Math.random();
-    let cumulativeProbability = 0;
-    let selectedReward;
-
-    for (const reward of rewards) {
-      cumulativeProbability += reward.probability;
-      if (random <= cumulativeProbability) {
-        selectedReward = reward;
-        break;
-      }
-    }
+    // Generate random spins (between 3 and 5 full rotations)
+    const fullSpins = Math.floor(Math.random() * 3) + 3;
+    
+    // Select random final position (0-7 for 8 slots)
+    const randomIndex = Math.floor(Math.random() * rewards.length);
+    
+    // Calculate total degrees to spin
+    // Each slot is 45 degrees (360/8)
+    const degreesPerSlot = 360 / rewards.length;
+    const finalDegrees = (fullSpins * 360) + (randomIndex * degreesPerSlot);
+    
+    const selectedReward = rewards[randomIndex];
 
     // Update user data
     user.spinsAvailable -= 1;
@@ -80,7 +82,35 @@ export const spinWheel = async (req, res) => {
     user.lastSpinDate = new Date();
 
     if (selectedReward.type === 'cashback') {
-      user.eRupeeBalance = (user.eRupeeBalance || 0) + selectedReward.amount;
+      // Get user's profile and e-rupee wallet
+      const profile = await Profile.findOne({ user: user._id });
+      if (!profile) {
+        return res.status(404).json({
+          success: false,
+          message: 'User profile not found'
+        });
+      }
+
+      const wallet = await ERupeeWallet.findById(profile.eRupeeWalletId);
+      if (!wallet) {
+        return res.status(404).json({
+          success: false,
+          message: 'e-Rupee wallet not found'
+        });
+      }
+
+      // Update wallet balance and add transaction
+      wallet.balance += selectedReward.amount;
+      wallet.transactions.push({
+        amount: selectedReward.amount,
+        type: 'CREDIT',
+        from: 'REWARD_SYSTEM',
+        to: profile.erupeeId,
+        note: `Won ₹${selectedReward.amount} cashback from Spin & Win`,
+        timestamp: new Date()
+      });
+
+      await wallet.save();
       user.rewardHistory.push({
         type: 'cashback',
         amount: selectedReward.amount,
@@ -100,13 +130,18 @@ export const spinWheel = async (req, res) => {
       success: true,
       reward: selectedReward.value,
       type: selectedReward.type,
-      amount: selectedReward.amount
+      amount: selectedReward.amount,
+      // Add these new properties for the spinning animation
+      finalDegrees: finalDegrees,
+      selectedIndex: randomIndex,
+      totalSlots: rewards.length
     });
   } catch (error) {
-    console.error('Error processing spin:', error);
+    console.error('Error processing spin:', error.stack);
     res.status(500).json({ 
       success: false,
-      message: 'Server error' 
+      message: 'Server error',
+      error: error.message
     });
   }
 };
@@ -114,7 +149,7 @@ export const spinWheel = async (req, res) => {
 // Get reward history
 export const getRewardHistory = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ 
         success: false,
@@ -135,10 +170,24 @@ export const getRewardHistory = async (req, res) => {
   }
 };
 
+// Helper function to check if it's a new day
+const isNewDay = (lastDate, currentDate) => {
+  if (!lastDate) return true;
+  
+  const last = new Date(lastDate);
+  const current = new Date(currentDate);
+  
+  return (
+    last.getFullYear() !== current.getFullYear() ||
+    last.getMonth() !== current.getMonth() ||
+    last.getDate() !== current.getDate()
+  );
+};
+
 // Add this new function to your existing rewardsController.js
 export const claimDailySpin = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ 
         success: false,
@@ -177,7 +226,7 @@ export const claimDailySpin = async (req, res) => {
 
 export const getScratchCards = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -200,7 +249,7 @@ export const getScratchCards = async (req, res) => {
 
 export const scratchCard = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -218,11 +267,40 @@ export const scratchCard = async (req, res) => {
     // Generate random reward between 10 and 50
     const amount = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
 
+    // Get user's profile and e-rupee wallet
+    const profile = await Profile.findOne({ user: user._id });
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: 'User profile not found'
+      });
+    }
+
+    const wallet = await ERupeeWallet.findById(profile.eRupeeWalletId);
+    if (!wallet) {
+      return res.status(404).json({
+        success: false,
+        message: 'e-Rupee wallet not found'
+      });
+    }
+
     // Update user data
     user.scratchCardsAvailable -= 1;
     user.totalScratchCardsUsed += 1;
     user.lastScratchCardDate = new Date();
-    user.eRupeeBalance += amount;
+    
+    // Update wallet balance and add transaction
+    wallet.balance += amount;
+    wallet.transactions.push({
+      amount: amount,
+      type: 'CREDIT',
+      from: 'REWARD_SYSTEM',
+      to: profile.erupeeId,
+      note: `Won ₹${amount} cashback from Scratch Card`,
+      timestamp: new Date()
+    });
+
+    await wallet.save();
     
     user.rewardHistory.push({
       type: 'cashback',
