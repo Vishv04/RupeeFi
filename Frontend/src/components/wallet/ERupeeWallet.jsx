@@ -336,9 +336,9 @@ const ERupeeWallet = () => {
                       </p>
                     </div>
                     <div className={`text-lg font-semibold ${
-                      tx.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                      tx.type === 'debit' ? 'text-red-600' : 'text-green-600'
                     }`}>
-                      {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toFixed(2)}
+                      {tx.type === 'debit' ? '-' : '+'}₹{tx.amount.toFixed(2)}
                     </div>
                   </div>
                 </div>

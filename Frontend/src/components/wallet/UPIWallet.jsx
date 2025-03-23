@@ -234,9 +234,9 @@ const UPIWallet = () => {
                       </p>
                     </div>
                     <div className={`font-bold ${
-                      transaction.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'
+                      transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {transaction.type === 'CREDIT' ? '+' : '-'}₹{transaction.amount.toFixed(2)}
+                      {transaction.type === 'credit' ? '+' : '-'}₹{transaction.amount.toFixed(2)}
                     </div>
                   </div>
                 </div>
