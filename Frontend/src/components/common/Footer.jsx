@@ -85,10 +85,8 @@ const Footer = () => {
           >
             <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-2">
-              <li>123 Finance Street</li>
-              <li>Mumbai, India</li>
-              <li>contact@rupeefi.com</li>
-              <li>+91 123 456 7890</li>
+              <li>Ahmedabad University</li>
+              <li>Gujarat, India</li>
             </ul>
           </motion.div>
 
@@ -144,7 +142,7 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-8 pt-8 border-t border-gray-700 text-center"
         >
-          <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} RupeeFi. All rights reserved.</p>
+          <p className="text-sm text-gray-400">CodePirates, Vishv Boda, Deep Patel, Subrat Jain</p>
         </motion.div>
       </div>
     </footer>
