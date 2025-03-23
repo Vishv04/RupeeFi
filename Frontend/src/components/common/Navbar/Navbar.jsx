@@ -60,16 +60,6 @@ function Navbar({ isAuthenticated, onLogout }) {
         { title: "Treasury", href: "/business/treasury", icon: <BsCurrencyDollar className="w-4 h-4" /> },
       ],
     },
-    {
-      title: "Company",
-      hasDropdown: true,
-      items: [
-        { title: "About", href: "/company/about", icon: <HiUsers className="w-4 h-4" /> },
-        { title: "Careers", href: "/company/careers", icon: <HiAcademicCap className="w-4 h-4" /> },
-        { title: "Press", href: "/company/press", icon: <HiNewspaper className="w-4 h-4" /> },
-        { title: "Investors", href: "/company/investors", icon: <HiOutlineBadgeCheck className="w-4 h-4" /> },
-      ],
-    },
   ];
 
   const toggleDropdown = (index) => {
