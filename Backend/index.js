@@ -1,17 +1,17 @@
 import express from "express";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import fileUpload from "express-fileupload";
 import dbConnect from "./config/database.js";
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url';
 
 // Get directory name (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+import blockchainRoutes from "./routes/blockchain.js";
 // Import routes
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
@@ -97,7 +97,10 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api/blockchain", blockchainRoutes);
+app.use("/api/rewards", rewardsRoutes);
 // Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   const status = err.status || 500;

@@ -14,12 +14,13 @@ const erupeeWalletSchema = new mongoose.Schema({
     },
     transactions: [
         {
-        txHash: String, // unique simulated transaction hash
-        from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        to: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        amount: Number,
-        note: String,
-        timestamp: { type: Date, default: Date.now },
+            txHash: String,
+            amount: Number,
+            type: { type: String, enum: ['credit', 'debit'], required: true },
+            from: String,
+            to: String,
+            note: String,
+            timestamp: { type: Date, default: Date.now },
         },
     ],
 });

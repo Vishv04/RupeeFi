@@ -61,7 +61,8 @@ const UPIWallet = () => {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 userId,
-                amount: parseFloat(amount) * 100
+                amount: parseFloat(amount) * 100,
+                walletType: 'upi'
               },
               { headers: { Authorization: `Bearer ${token}` } }
             );

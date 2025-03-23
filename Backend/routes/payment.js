@@ -3,7 +3,9 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { protect } from '../middleware/auth.js';
 import Profile from '../models/Profile.js';
-import Wallet from '../models/wallet.js';
+import UpiWallet from '../models/upiWallet.js';
+import ERupeeWallet from '../models/eRupeeWallet.js';
+import { initializeWallets } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -51,25 +53,25 @@ router.post('/verify', protect, async (req, res) => {
       return res.status(400).json({ message: 'Transaction not legit!' });
     }
 
-    // Find user's profile and wallet
+    // Initialize wallets if they don't exist
+    await initializeWallets(userId);
+
+    // Find user's profile
     const profile = await Profile.findOne({ user: userId });
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
-    const wallet = await Wallet.findById(profile.walletId);
-    if (!wallet) {
-      return res.status(404).json({ message: 'Wallet not found' });
-    }
+    const amountInRupees = amount / 100;
 
-    // Get payment details
-    const payment = await razorpay.payments.fetch(razorpay_payment_id);
-    const amountInRupees = payment.amount / 100;
-
-    // Update appropriate wallet balance and transactions
     if (walletType === 'upi') {
-      wallet.upiBalance += amountInRupees;
-      wallet.upiTransactions.push({
+      const upiWallet = await UpiWallet.findById(profile.upiWalletId);
+      if (!upiWallet) {
+        return res.status(404).json({ message: 'UPI Wallet not found' });
+      }
+
+      upiWallet.balance += amountInRupees;
+      upiWallet.transactions.push({
         amount: amountInRupees,
         type: 'credit',
         from: 'Razorpay',
@@ -77,9 +79,20 @@ router.post('/verify', protect, async (req, res) => {
         description: 'Added money via Razorpay',
         timestamp: new Date()
       });
+
+      await upiWallet.save();
+      return res.json({
+        message: 'Payment verified successfully',
+        balance: upiWallet.balance
+      });
     } else {
-      wallet.eRupeeBalance += amountInRupees;
-      wallet.eRupeeTransactions.push({
+      const eRupeeWallet = await ERupeeWallet.findById(profile.eRupeeWalletId);
+      if (!eRupeeWallet) {
+        return res.status(404).json({ message: 'eRupee Wallet not found' });
+      }
+
+      eRupeeWallet.balance += amountInRupees;
+      eRupeeWallet.transactions.push({
         txHash: `TX_${Date.now()}`,
         amount: amountInRupees,
         type: 'credit',
@@ -88,14 +101,13 @@ router.post('/verify', protect, async (req, res) => {
         note: 'Added money via Razorpay',
         timestamp: new Date()
       });
+
+      await eRupeeWallet.save();
+      return res.json({
+        message: 'Payment verified successfully',
+        balance: eRupeeWallet.balance
+      });
     }
-
-    await wallet.save();
-
-    res.json({
-      message: 'Payment verified successfully',
-      balance: walletType === 'upi' ? wallet.upiBalance : wallet.eRupeeBalance
-    });
   } catch (error) {
     console.error('Payment verification error:', error);
     res.status(500).json({ message: 'Payment verification failed' });

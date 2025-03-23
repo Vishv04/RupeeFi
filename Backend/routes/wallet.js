@@ -3,6 +3,7 @@ import { protect } from '../middleware/auth.js';
 import UpiWallet from '../models/upiWallet.js';
 import ERupeeWallet from '../models/eRupeeWallet.js';
 import Profile from '../models/Profile.js';
+import mongoose from 'mongoose'; // Import mongoose
 
 const router = express.Router();
 
@@ -116,6 +117,66 @@ router.get('/erupee/:userId', protect, async (req, res) => {
   } catch (error) {
     console.error('Error fetching eRupee wallet:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Transfer from UPI to e-Rupee wallet
+router.post('/transfer-to-erupee', protect, async (req, res) => {
+  const { amount } = req.body;
+  const userId = req.user._id;
+
+  try {
+    // Start a transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // Get user's wallets
+      const profile = await Profile.findById(userId).session(session);
+      
+      // Check UPI balance
+      if (profile.upiWalletId.balance < amount) {
+        throw new Error('Insufficient UPI balance');
+      }
+
+      // Update UPI balance
+      await UpiWallet.findByIdAndUpdate(
+        profile.upiWalletId,
+        { $inc: { balance: -amount } },
+        { session }
+      );
+
+      // Update e-Rupee balance
+      await ERupeeWallet.findByIdAndUpdate(
+        profile.eRupeeWalletId,
+        { 
+          $inc: { balance: amount },
+          $push: {
+            transactions: {
+              type: 'UPI_TO_ERUPEE',
+              amount: amount,
+              timestamp: new Date(),
+              status: 'completed',
+              note: 'Transferred from UPI wallet'
+            }
+          }
+        },
+        { session }
+      );
+
+      // Commit the transaction
+      await session.commitTransaction();
+      res.json({ message: 'Transfer successful' });
+    } catch (error) {
+      // If an error occurred, abort the transaction
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      // End the session
+      session.endSession();
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

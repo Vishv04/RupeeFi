@@ -4,13 +4,15 @@ import { authMerchant } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import Merchant from '../models/merchant.js';
 import auth from '../middleware/auth.js';
+import Profile from '../models/Profile.js';
+import protect from '../middleware/auth.js';
 
 const router = express.Router();
 
 // Register merchant
 router.post('/register', async (req, res) => {
   try {
-    const { businessName, email, password, phone, address, gstin } = req.body;
+    const { businessName, email, password, phone, address, gstin, userId } = req.body;
 
     // Check if merchant already exists
     let merchant = await Merchant.findOne({ email });
@@ -29,6 +31,13 @@ router.post('/register', async (req, res) => {
     });
 
     await merchant.save();
+
+    // Update user's profile with merchant ID
+    const profile = await Profile.findOne({ user: userId });
+    if (profile) {
+      profile.merchantId = merchant._id;
+      await profile.save();
+    }
 
     // Generate token
     const token = jwt.sign(
@@ -121,5 +130,22 @@ router.get('/customer-insights', authMerchant, merchantController.getCustomerIns
 
 // Route to get dashboard stats
 router.get('/dashboard-stats', authMerchant, merchantController.getDashboardStats);
+
+// Get merchant by ID
+router.get('/:merchantId', protect, async (req, res) => {
+  try {
+    const merchant = await Merchant.findById(req.params.merchantId)
+      .select('-password -__v');
+    
+    if (!merchant) {
+      return res.status(404).json({ message: 'Merchant not found' });
+    }
+
+    res.json({ merchant });
+  } catch (error) {
+    console.error('Error fetching merchant:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 export default router; 

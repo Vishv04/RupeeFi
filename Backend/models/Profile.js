@@ -6,6 +6,11 @@ const profileSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    merchantId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Merchant',
+        default: null
+    },
     qrCode: {
         type: String,
         required: true,

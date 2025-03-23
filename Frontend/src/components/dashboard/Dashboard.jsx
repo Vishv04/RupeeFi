@@ -73,16 +73,37 @@ const Dashboard = ({ setIsAuthenticated }) => {
 
   const fetchWalletBalances = async (userId) => {
     try {
+      if (!userId) {
+        console.error('No user ID provided');
+        return;
+      }
+
       const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No auth token found');
+        navigate('/login');
+        return;
+      }
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/wallet/balances/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      setWalletData(response.data);
+      
+      if (response.data) {
+        setWalletData({
+          upiWallet: response.data.upiWallet || { balance: 0 },
+          eRupeeWallet: response.data.eRupeeWallet || { balance: 0 }
+        });
+      }
     } catch (error) {
-      console.error('Error fetching wallet balances:', error);
+      console.error('Error fetching wallet balances:', error.response?.data || error.message);
+      // Handle specific error cases
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
     }
   };
 

@@ -15,8 +15,8 @@ const upiWalletSchema = new mongoose.Schema({
         {
             amount: Number,
             type: { type: String, enum: ['credit', 'debit'], required: true },
-            from: String,  // Changed to String (e.g., "Card", "UPI", etc.)
-            to: String,    // Changed to String
+            from: String,  // Ensure this is String type
+            to: String,    // Ensure this is String type
             description: String,
             timestamp: { type: Date, default: Date.now },
         },
