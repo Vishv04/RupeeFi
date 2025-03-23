@@ -47,6 +47,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/merchant", merchantRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/rewards", rewardsRoutes);
 // Error handling middleware
 
 app.use((err, req, res, next) => {
