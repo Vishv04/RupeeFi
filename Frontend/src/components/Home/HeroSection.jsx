@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Wallet, BarChart, Shield, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import DashboardImg from "../../assets/Dashboard.png";
 export default function Herosection() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -69,7 +69,7 @@ export default function Herosection() {
           className="text-center"
         >
           <h1 className="relative z-10 mx-auto max-w-5xl text-blue-700 text-center text-3xl font-bold md:text-5xl lg:text-7xl bg-clip-text  bg-gradient-to-r from-[#0d1152] to-[#4552e3]">
-            {"Financial freedom begins with RupeeFi"
+            {"Financial   freedom   begins  with RupeeFi"
               .split(" ")
               .map((word, index) => (
                 <motion.span
@@ -191,11 +191,11 @@ export default function Herosection() {
               <div className="flex-1 text-center text-xs text-white/70">RupeeFi Dashboard</div>
             </div>
             <img
-              src="/assets/dashboard-preview.jpg"
+              src={DashboardImg}
               alt="RupeeFi dashboard preview"
               className="aspect-[16/9] h-auto w-full object-cover"
               onError={(e) => {
-                e.target.src = "https://placehold.co/1200x675/1e2cc8/ffffff?text=RupeeFi+Dashboard";
+                e.target.src = {DashboardImg};
               }}
             />
           </div>
@@ -205,16 +205,3 @@ export default function Herosection() {
   );
 }
 
-const Navbar = () => {
-  return (
-    <nav className="flex w-full items-center justify-between border-t border-b border-neutral-200 px-4 py-4 dark:border-neutral-800">
-      <div className="flex items-center gap-2">
-        <div className="size-7 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
-        <h1 className="text-base text-blue-700 font-bold md:text-2xl">Aceternity UI</h1>
-      </div>
-      <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-white dark:text-black dark:hover:bg-gray-200">
-        Login
-      </button>
-    </nav>
-  );
-};
