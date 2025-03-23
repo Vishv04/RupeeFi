@@ -177,6 +177,9 @@ function Navbar({ isAuthenticated, onLogout }) {
                     <Link to="/rewards" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
                       🎁 Rewards
                     </Link>
+                    <Link to="/blockchain" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                      ⛓️ Blockchain
+                    </Link>
                     <Link to="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
                       Settings
                     </Link>
@@ -258,6 +261,9 @@ function Navbar({ isAuthenticated, onLogout }) {
                   </Link>
                   <Link to="/rewards" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
                     🎁 Rewards
+                  </Link>
+                  <Link to="/blockchain" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    ⛓️ Blockchain
                   </Link>
                   <Link to="/settings" className="block text-gray-700 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
                     Settings

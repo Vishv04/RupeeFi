@@ -65,8 +65,8 @@ const giveStreakReward = async (user) => {
     wallet.balance += STREAK_REWARD_AMOUNT;
     wallet.transactions.push({
       amount: STREAK_REWARD_AMOUNT,
-      type: 'CREDIT',
-      from: 'REWARD_SYSTEM',
+      type: 'credit',
+  from: 'REWARD_SYSTEM',
       to: profile.erupeeId,
       note: '7-day payment streak reward',
       timestamp: new Date()

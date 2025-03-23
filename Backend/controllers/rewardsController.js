@@ -103,7 +103,7 @@ export const spinWheel = async (req, res) => {
       wallet.balance += selectedReward.amount;
       wallet.transactions.push({
         amount: selectedReward.amount,
-        type: 'CREDIT',
+        type: 'credit',
         from: 'REWARD_SYSTEM',
         to: profile.erupeeId,
         note: `Won ₹${selectedReward.amount} cashback from Spin & Win`,
@@ -293,7 +293,7 @@ export const scratchCard = async (req, res) => {
     wallet.balance += amount;
     wallet.transactions.push({
       amount: amount,
-      type: 'CREDIT',
+      type: 'credit',
       from: 'REWARD_SYSTEM',
       to: profile.erupeeId,
       note: `Won ₹${amount} cashback from Scratch Card`,
