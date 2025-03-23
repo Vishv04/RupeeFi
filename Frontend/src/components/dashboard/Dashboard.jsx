@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaStore } from 'react-icons/fa';
+import KYCForm from '../kyc/KYCForm';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -15,8 +16,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
     email: '',
     visitCount: 0,
     lastVisit: null,
-    isMerchant: false
+    isMerchant: false,
+    kycCompleted: false
   });
+  const [showKYCForm, setShowKYCForm] = useState(false);
 
   useEffect(() => {
     // Fetch user data from localStorage or API
@@ -24,12 +27,49 @@ const Dashboard = ({ setIsAuthenticated }) => {
     if (user) {
       setUserData({
         ...user,
-        isMerchant: user.isMerchant || false
+        isMerchant: user.isMerchant || false,
+        kycCompleted: user.kycCompleted || false
       });
-      setUserData(user);
       fetchWalletBalances(user._id);
+      checkKYCStatus(user._id);
     }
   }, []);
+
+  const checkKYCStatus = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log('Checking KYC status for user ID:', userId);
+      console.log('Using API URL:', import.meta.env.VITE_API_URL);
+      
+      // First, test if the KYC routes are accessible
+      try {
+        const testResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/kyc/test`);
+        console.log('KYC routes test response:', testResponse.data);
+      } catch (testError) {
+        console.error('Error testing KYC routes:', testError);
+        // Continue anyway to see the specific error with the main request
+      }
+      
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/kyc/status/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      
+      console.log('KYC status response:', response.data);
+      setUserData(prev => ({ ...prev, kycCompleted: response.data.kycCompleted }));
+      if (!response.data.kycCompleted) {
+        setShowKYCForm(true);
+      }
+    } catch (error) {
+      console.error('Error checking KYC status:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      console.log('Server responded with status:', error.response?.status);
+      // Still show KYC form if there's an error checking status
+      setShowKYCForm(true);
+    }
+  };
 
   const fetchWalletBalances = async (userId) => {
     try {
@@ -80,10 +120,48 @@ const Dashboard = ({ setIsAuthenticated }) => {
     navigate('/');
   };
 
+  const handleKYCComplete = () => {
+    setShowKYCForm(false);
+    setUserData(prev => ({ ...prev, kycCompleted: true }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pt-24">
         <div className="px-4 py-6 sm:px-0">
+          {/* KYC Banner */}
+          {!userData.kycCompleted && !showKYCForm && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-yellow-700">
+                    Your KYC is not completed. Please complete your KYC to access full features.
+                  </p>
+                  <div className="mt-2">
+                    <button
+                      onClick={() => setShowKYCForm(true)}
+                      className="text-sm font-medium text-yellow-800 hover:text-yellow-900"
+                    >
+                      Complete KYC now →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* KYC Form */}
+          {showKYCForm && (
+            <div className="mb-6">
+              <KYCForm onKYCComplete={handleKYCComplete} />
+            </div>
+          )}
+
           {/* User Info Card */}
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">Welcome, {userData.name}!</h2>
@@ -124,77 +202,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
               <div className="text-3xl font-bold text-gray-900">
                 ₹{walletData.eRupeeWallet.balance.toFixed(2)}
               </div>
-              
-              {/* Merchant Notice - Only show if user is a merchant */}
-              {/* {userData.isMerchant && (
-                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-indigo-700 mb-2">You are a registered merchant</h3>
-                      <p className="text-indigo-600">You can access your merchant dashboard to view transactions, manage payment methods, and access merchant-specific features.</p>
-                    </div>
-                    <Link 
-                      to="/merchant" 
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
-                    >
-                      <FaStore className="mr-2" /> Merchant Dashboard
-                    </Link>
-                  </div>
-                </div>
-              )} */}
             </div>
-
-            {/* eRupee Wallet Card */}
-            {/* <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold">eRupee Wallet</h3>
-                <Link 
-                  to={`/wallet/erupee/${userData._id}`}
-                  className="text-blue-600 hover:text-blue-800 text-sm"
-                >
-                  More Details →
-                </Link>
-              </div>
-              <div className="text-3xl font-bold text-gray-900">
-                ₹{walletData.eRupeeWallet.balance.toFixed(2)}
-              </div> */}
-              
-              {/* Merchant Notice - Only show if user is a merchant */}
-              {/* {userData.isMerchant && (
-                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-indigo-700 mb-2">You are a registered merchant</h3>
-                      <p className="text-indigo-600">You can access your merchant dashboard to view transactions, manage payment methods, and access merchant-specific features.</p>
-                    </div>
-                    <Link 
-                      to="/merchant" 
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
-                    >
-                      <FaStore className="mr-2" /> Merchant Dashboard
-                    </Link>
-                  </div>
-                </div>
-              )} */}
-              
-              {/* Merchant Registration - Only show if user is NOT a merchant */}
-              {/* {!userData.isMerchant && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-green-700 mb-2">Become a Merchant</h3>
-                      <p className="text-green-600">Register as a merchant to accept payments, track transactions, and access merchant-specific features.</p>
-                    </div>
-                    <Link 
-                      to="/profile?tab=merchant-registration" 
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
-                    >
-                      <FaStore className="mr-2" /> Register as Merchant
-                    </Link>
-                  </div>
-                </div>
-              )} */}
-            {/* </div> */}
           </div>
         </div>
       </main>
