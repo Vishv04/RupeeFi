@@ -106,6 +106,7 @@ const KYCForm = ({ onKYCComplete }) => {
 
     try {
       const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
       
       // First test if KYC routes are accessible
       try {
@@ -152,6 +153,7 @@ const KYCForm = ({ onKYCComplete }) => {
         const kycResponse = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/kyc/details`,
           formDataToSend,
+          user,
           {
             headers: {
               Authorization: `Bearer ${token}`,
