@@ -30,7 +30,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
         kycCompleted: user.kycCompleted || false
       });
       fetchWalletBalances(user._id);
-      checkKYCStatus(user._id);
+      // checkKYCStatus(user._id);
     }
   }, []);
 
