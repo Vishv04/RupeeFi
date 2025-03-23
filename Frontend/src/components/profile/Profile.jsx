@@ -462,7 +462,7 @@ const Profile = ({ setIsAuthenticated }) => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-600 mb-1">UPI ID</label>
+                  <label className="text-sm font-medium text-gray-600 mb-1">Erupee ID</label>
                   <div className="relative">
                     <input
                       type="text"
