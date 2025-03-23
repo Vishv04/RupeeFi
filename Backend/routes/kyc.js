@@ -1,5 +1,4 @@
 import express from 'express';
-import { protect } from '../middleware/auth.js';
 import {
   checkKYCStatus,
   submitKYCDetails,
@@ -15,15 +14,15 @@ router.get('/test', (req, res) => {
 });
 
 // Check KYC status
-router.get('/status/:userId', protect, checkKYCStatus);
+router.get('/status/:userId', checkKYCStatus);
 
 // Submit KYC details
-router.post('/details', protect, submitKYCDetails);
+router.post('/details', submitKYCDetails);
 
 // Send OTP for verification
-router.post('/send-otp', protect, sendOTP);
+router.post('/send-otp', sendOTP);
 
 // Verify OTP
-router.post('/verify-otp', protect, verifyOTP);
+router.post('/verify-otp', verifyOTP);
 
 export default router; 

@@ -2,7 +2,7 @@ import Userkyc from '../models/Userkyc.js';
 import User from '../models/User.js';
 import { sendEmail } from '../utils/email.js';
 import { generateOTP } from '../utils/otp.js';
-import { createLogger } from 'vite';
+import { v2 as cloudinary } from 'cloudinary';
 
 // Check KYC status
 export const checkKYCStatus = async (req, res) => {
@@ -31,47 +31,79 @@ export const submitKYCDetails = async (req, res) => {
     console.log('Received KYC submission request');
     
     const { aadhaarNumber, contactNumber, panNumber } = req.body;
-    console.log(req.user);
-    const userId = req.user._id;
+    // const userId = req.user._id;
+    const userId = localStorage.getItem('user')._id;
 
     console.log('User ID from token:', userId);
 
     // Check if KYC already exists
     let kyc = await Userkyc.findOne({ user: userId });
-    
     if (kyc) {
       return res.status(400).json({ message: 'KYC already submitted' });
     }
 
-    // Check if files were uploaded
-    if (!req.files || !req.files.signature || !req.files.facialData) {
+    // Check if required files were uploaded
+    if (
+      !req.files ||
+      !req.files.signature ||
+      !req.files.signature[0] ||
+      !req.files.facialData ||
+      !req.files.facialData[0]
+    ) {
       console.log('Missing required files');
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Signature and facial data files are required',
-        received: req.files ? Object.keys(req.files) : 'No files' 
+        received: req.files ? Object.keys(req.files) : 'No files'
       });
     }
 
-    // Handle file uploads
-    const signatureFile = req.files.signature;
-    const facialDataFile = req.files.facialData;
+    // Extract file objects from arrays
+    const signatureFile = req.files.signature[0];
+    const facialDataFile = req.files.facialData[0];
 
-    // Create new KYC record
+    // Upload signature to Cloudinary
+    let signatureUrl = '';
+    try {
+      const signatureResult = await cloudinary.uploader.upload(signatureFile.path, {
+        folder: 'kyc/signatures',
+        resource_type: 'image'
+      });
+      signatureUrl = signatureResult.secure_url;
+      console.log('Signature uploaded to Cloudinary:', signatureUrl);
+    } catch (uploadError) {
+      console.error('Error uploading signature to Cloudinary:', uploadError);
+      return res.status(500).json({ message: 'Error uploading signature' });
+    }
+
+    // Upload facial data to Cloudinary
+    let facialDataUrl = '';
+    try {
+      const facialDataResult = await cloudinary.uploader.upload(facialDataFile.path, {
+        folder: 'kyc/facial',
+        resource_type: 'image'
+      });
+      facialDataUrl = facialDataResult.secure_url;
+      console.log('Facial data uploaded to Cloudinary:', facialDataUrl);
+    } catch (uploadError) {
+      console.error('Error uploading facial data to Cloudinary:', uploadError);
+      return res.status(500).json({ message: 'Error uploading facial data' });
+    }
+
+    // Create new KYC record with Cloudinary URLs
     kyc = new Userkyc({
       user: userId,
-      profile: userId, // Using userId as profile reference since we don't have a separate profile model
+      profile: userId, // Assuming profile references userId
       aadharNumber: aadhaarNumber,
       panNumber,
       contactNumber,
-      signature: signatureFile.name, // Store file name instead of path
-      facialData: facialDataFile.name, // Store file name instead of path
+      signature: signatureUrl, // Store Cloudinary URL instead of filename
+      facialData: facialDataUrl, // Store Cloudinary URL instead of filename
       status: 'pending'
     });
 
     console.log('Saving KYC record:', kyc);
     await kyc.save();
 
-    console.log(kyc);
     res.status(201).json({
       message: 'KYC details submitted successfully',
       kycId: kyc._id

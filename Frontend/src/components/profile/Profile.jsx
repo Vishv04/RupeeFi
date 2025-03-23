@@ -119,12 +119,15 @@ const Profile = ({ setIsAuthenticated }) => {
       );
 
       if (response.data.success) {
+        // Generate eRupeeId from email
+        const email = user.email || '';
+        const erupeeId = email.split('@')[0] + '@erupee';
+        
         // Check multiple sources for merchant status
         const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
         const merchantToken = localStorage.getItem('merchantToken');
         const merchantData = localStorage.getItem('merchant');
         
-        // If any of these is true, user is a merchant
         const isMerchant = 
           (userFromStorage && userFromStorage.isMerchant) || 
           (merchantToken && merchantToken.length > 10) || 
@@ -137,15 +140,18 @@ const Profile = ({ setIsAuthenticated }) => {
           finalStatus: isMerchant
         });
         
+        // Make sure we have all necessary data from response or generate it
         setProfileData({
-          ...response.data.data,
-          name: user.name || response.data.data.name,
-          email: user.email || response.data.data.email,
-          picture: user.picture || response.data.data.picture,
+          ...response.data.profile,
+          name: user.name || response.data.profile?.name || '',
+          email: user.email || response.data.profile?.email || '',
+          picture: user.picture || response.data.profile?.picture || '',
+          erupeeId: erupeeId,
+          referralCode: response.data.profile?.referralCode || 'WELCOME',
+          referralCount: response.data.profile?.referralCount || 0,
           isMerchant: isMerchant
         });
         
-        // If user is already a merchant, populate merchant data
         if (isMerchant) {
           fetchMerchantData();
         }
