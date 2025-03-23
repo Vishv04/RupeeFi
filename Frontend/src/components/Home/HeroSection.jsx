@@ -103,7 +103,7 @@ export default function Herosection() {
             }}
             className="relative z-10 mx-auto text-blue-700max-w-2xl py-6 text-center text-lg font-normal text-gray-600"
           >
-            Despite the Indian government’s efforts, the adoption of India’s Central Bank Digital Currency (CBDC), the e-Rupee, remains limited.
+            Despite the Indian government's efforts, the adoption of India's Central Bank Digital Currency (CBDC), the e-Rupee, remains limited.
 
           </motion.p>
         </motion.div>
@@ -166,6 +166,102 @@ export default function Herosection() {
               <p className="text-sm text-gray-600 text-center">{feature.description}</p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Add new section after the feature highlights and before the dashboard preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.4 }}
+          className="relative z-10 mt-20 mb-16"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* CBDC Information */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3">
+                {/* <img 
+                  src="https://www.rbi.org.in/images/RBI_Logo.png" 
+                  alt="RBI Logo" 
+                  className="w-12 h-12 object-contain"
+                /> */}
+                <h2 className="text-2xl md:text-3xl font-bold text-[#0d1152]">
+                  Digital Rupee (e₹) - India's CBDC
+                </h2>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-gray-600">
+                  The Digital Rupee (e₹) is India's Central Bank Digital Currency (CBDC), launched by the Reserve Bank of India. It represents a direct liability of the RBI and serves as a digital version of physical cash.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-white rounded-xl border border-[#888feb]/20 hover:border-[#4552e3]/30 transition-all duration-300">
+                    <h3 className="text-lg font-semibold text-[#0d1152] mb-2">Retail e₹</h3>
+                    <p className="text-sm text-gray-600">
+                      Designed for everyday transactions by individuals and businesses, offering the same experience as physical cash but in digital form.
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-[#888feb]/20 hover:border-[#4552e3]/30 transition-all duration-300">
+                    <h3 className="text-lg font-semibold text-[#0d1152] mb-2">Wholesale e₹</h3>
+                    <p className="text-sm text-gray-600">
+                      Used for interbank transfers and large-value transactions in financial markets.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Benefits */}
+            <div className="bg-gradient-to-br from-[#f8f9ff] to-white p-6 rounded-2xl border border-[#888feb]/20">
+              <h3 className="text-xl font-semibold text-[#0d1152] mb-6">
+                Benefits of Digital Rupee
+              </h3>
+              
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Reduced Operational Costs",
+                    description: "Lower costs of printing, storing, and distributing physical currency"
+                  },
+                  {
+                    title: "Real-time Settlements",
+                    description: "Instant payment settlements without intermediary delays"
+                  },
+                  {
+                    title: "Financial Inclusion",
+                    description: "Easier access to financial services for unbanked populations"
+                  },
+                  {
+                    title: "Programmable Money",
+                    description: "Smart contracts and automated payments capabilities"
+                  }
+                ].map((benefit, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 1.6 + (index * 0.1) }}
+                    className="flex items-start space-x-3 p-3 rounded-lg hover:bg-[#4552e3]/5 transition-colors duration-300"
+                  >
+                    <div className="flex-shrink-0 w-1.5 h-1.5 mt-2 rounded-full bg-[#4552e3]" />
+                    <div>
+                      <h4 className="font-medium text-[#0d1152]">{benefit.title}</h4>
+                      <p className="text-sm text-gray-600">{benefit.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <Link 
+                to="/learn-more" 
+                className="mt-6 inline-flex items-center text-[#4552e3] hover:text-[#15229c] transition-colors duration-300"
+              >
+                Learn more about Digital Rupee
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </div>
+          </div>
         </motion.div>
 
         {/* Dashboard preview - larger and more prominent */}

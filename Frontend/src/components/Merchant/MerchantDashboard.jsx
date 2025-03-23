@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import MerchantHeader from './MerchantHeader';
 import DashboardView from './DashboardView';
@@ -13,46 +13,28 @@ const MerchantDashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const location = useLocation();
-  const merchant = JSON.parse(localStorage.getItem('merchant') || '{}');
-  const token = localStorage.getItem('merchantToken');
+  
+  // Remove authentication-related code
+  const merchant = { name: 'Demo Merchant', email: 'demo@example.com' }; // Default merchant data
 
   // Set active tab based on URL
   useEffect(() => {
     const pathParts = location.pathname.split('/');
     const path = pathParts[pathParts.length - 1];
     
-    // If we're at just /merchant/dashboard or with a trailing slash
     if (path === 'dashboard' || path === '') {
       setActiveTab('dashboard');
     } else if (['transactions', 'employees', 'profile'].includes(path)) {
       setActiveTab(path);
     }
-    
-    console.log('Current path:', path, 'Setting active tab to:', 
-      path === 'dashboard' || path === '' ? 'dashboard' : path);
   }, [location.pathname]);
-
-  // Check authentication
-  useEffect(() => {
-    if (!token) {
-      console.log('No merchant token found, redirecting to login');
-      navigate('/merchant/login');
-    } else {
-      console.log('Merchant authenticated, token found');
-    }
-  }, [token, navigate]);
 
   // Redirect to dashboard tab if we're just at /merchant/dashboard
   useEffect(() => {
-    // Only run this if we're authenticated
-    if (token && location.pathname === '/merchant/dashboard') {
-      console.log('At dashboard root, initializing dashboard view');
-      // We're already at dashboard, just make sure the tab is set
+    if (location.pathname === '/merchant/dashboard') {
       setActiveTab('dashboard');
     }
-  }, [location.pathname, token, navigate]);
-
-  if (!token) return null;
+  }, [location.pathname]);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -71,7 +53,6 @@ const MerchantDashboard = ({ onLogout }) => {
 
   // Function to navigate between tabs
   const handleTabChange = (tab) => {
-    console.log('Changing tab to:', tab);
     setActiveTab(tab);
     if (tab === 'dashboard') {
       navigate('/merchant/dashboard');
@@ -87,8 +68,6 @@ const MerchantDashboard = ({ onLogout }) => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
   };
 
-  console.log('Rendering merchant dashboard with active tab:', activeTab);
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -98,7 +77,6 @@ const MerchantDashboard = ({ onLogout }) => {
     >
       <MerchantNavbar darkMode={darkMode} merchant={merchant} onLogout={onLogout} />
       
-      {/* Top Navigation */}
       <MerchantHeader 
         darkMode={darkMode} 
         toggleDarkMode={toggleDarkMode} 
@@ -109,7 +87,6 @@ const MerchantDashboard = ({ onLogout }) => {
         accentColor={accentColor}
       />
 
-      {/* Main Content */}
       <div className="container mx-auto pt-24 px-4 pb-8">
         <AnimatePresence mode="wait">
           {activeTab === 'dashboard' && (
