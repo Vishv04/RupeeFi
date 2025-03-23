@@ -4,55 +4,58 @@ const rewardHistorySchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['cashback', 'discount', 'voucher'],
-    required: true
+    required: true,
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   description: String,
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   picture: String,
   googleId: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   eRupeeBalance: {
     type: Number,
-    default: 0
+    default: 500,  // Start with 500 for demo
   },
-  // Add reward-related fields
+  upiBalance: {  // Added to support UPI integration
+    type: Number,
+    default: 500,  // Start with 500 for demo
+  },
   spinsAvailable: {
     type: Number,
-    default: 20  // Start with 3 free spins
+    default: 20,
   },
   totalSpinsUsed: {
     type: Number,
-    default: 0
+    default: 0,
   },
   lastDailySpinClaim: {
     type: Date,
-    default: null
+    default: null,
   },
   isFirstLogin: {
     type: Boolean,
-    default: true
+    default: true,
   },
   rewardHistory: [rewardHistorySchema],
   lastSpinDate: Date,
@@ -73,23 +76,27 @@ const userSchema = new mongoose.Schema({
     ifscCode: String,
     isVerified: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   scratchCardsAvailable: {
     type: Number,
-    default: 20  // Start with 3 free scratch cards
+    default: 20,
   },
   totalScratchCardsUsed: {
     type: Number,
-    default: 0
+    default: 0,
   },
   lastScratchCardDate: {
     type: Date,
-    default: null
-  }
+    default: null,
+  },
+  transactionCount: {  // Added to track transfers for rewards
+    type: Number,
+    default: 0,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
-export default mongoose.model('User', userSchema); 
+export default mongoose.model('User', userSchema);

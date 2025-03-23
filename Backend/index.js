@@ -1,10 +1,10 @@
 import express from "express";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import dbConnect from "./config/database.js";
-import { cloudinaryConnect } from "./config/cloudinary.js";
-
+// import { cloudinaryConnect } from "./config/cloudinary.js";
+import blockchainRoutes from "./routes/blockchain.js";
 // Import routes
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
@@ -47,6 +47,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/merchant", merchantRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/blockchain", blockchainRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   const status = err.status || 500;
