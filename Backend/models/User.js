@@ -87,6 +87,15 @@ const userSchema = new mongoose.Schema({
   lastScratchCardDate: {
     type: Date,
     default: null
+  },
+  // Add OTP-related fields
+  otp: {
+    type: String,
+    select: false // Don't include in queries by default
+  },
+  otpExpiry: {
+    type: Date,
+    select: false // Don't include in queries by default
   }
 }, {
   timestamps: true
