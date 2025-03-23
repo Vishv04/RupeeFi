@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 function createColorGenerator(colorArray) {
   const colors = colorArray?.length
     ? colorArray
-    : ["#ff0f7b", "#ff930f", "#45caff", "#f5e050", "#8a2be2", "#00ff7f", "#ff4500"];
+    : ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96c93d", "#ffcc5c", "#88d8b0", "#ff9f1c"];
   let currentIndex = 0;
 
   return function () {
@@ -18,11 +18,11 @@ function createColorGenerator(colorArray) {
 
 export const SpinWheel = ({
   itemColors = [],
-  borderColor = "#666",
-  spinActionName = "spin", // Updated default to lowercase
+  borderColor = "#444",
+  spinActionName = "Spin Now",
   resetActionName = "Reset",
-  size = 400,
-  spinTime = 3000,
+  size = 450,
+  spinTime = 4000,
   onResult,
   onFinishSpin,
   onReset,
@@ -110,7 +110,6 @@ export const SpinWheel = ({
       }
 
       onResult?.(items[rewardIndex]);
-
       setRandIndex(rewardIndex);
       setInitState(false);
       setIsFinished(false);
@@ -152,66 +151,82 @@ export const SpinWheel = ({
       : 0;
 
   return (
-    <div className="flex flex-col items-center justify-center p-8">
+    <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen">
       {error && (
-        <div className="text-center text-red-600 p-4 bg-red-50 rounded-lg mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center text-red-400 p-4 bg-red-900/30 rounded-xl mb-6 border border-red-500/50"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
-      <div className="text-center mb-4">
-        <p className="text-lg font-semibold">Spins Available: {spinsAvailable}</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-center mb-6"
+      >
+        <p className="text-2xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+          Spins Available: {spinsAvailable}
+        </p>
+      </motion.div>
 
-      <div className="relative">
-        {/* Enhanced Pointer */}
+      <motion.div
+        className="relative"
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        {/* 3D Pointer */}
         <motion.div
-          className="absolute -top-1 left-1/2 transform -translate-x-1/2 z-20 pointer rotate-180"
-          animate={{ y: [0, -5, 0] }}
-          transition={{ repeat: Infinity, duration: 1 }}
+          className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-20 rotate-180"
+          animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
         >
-          <div className="pointer-head" />
-          <div className="pointer-stem" />
+          <div className="w-0 h-0 border-l-[15px] border-r-[15px] border-b-[30px] border-l-transparent border-r-transparent border-b-red-600 shadow-lg" />
+          <div className="w-4 h-8 bg-red-600 rounded-b-md mx-auto shadow-md" />
         </motion.div>
 
-        <div
-          className="spin-container"
+        <motion.div
+          className="spin-container relative"
           style={{
             width: size,
             height: size,
-            boxShadow: `0 0 15px #333 inset, 0 0 15px ${borderColor}`,
+            borderRadius: "50%",
+            background: "linear-gradient(135deg, #1e1e1e, #333)",
+            boxShadow: "0 15px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.1)",
+            transformStyle: "preserve-3d",
+            perspective: "1000px",
             ...spinContainerStyle,
           }}
+          animate={{ rotateX: isSpinning ? 10 : 0, rotateY: isSpinning ? 10 : 0 }}
         >
-          {initState ? (
-            <button
-              className="spin-button"
-              style={spinButtonStyle}
-              onClick={spinWheel}
-              disabled={isSpinning || spinsAvailable <= 0}
-            >
-              {isSpinning ? "spinning" : "spin"}
-            </button>
-          ) : (
-            <button
-              className="spin-button"
-              style={resetButtonStyle}
-              onClick={resetWheel}
-              disabled={!isFinished}
-            >
-              {resetActionName}
-            </button>
-          )}
-
-          <div
-            className="spin-wheel"
+          <motion.button
+            className="absolute inset-0 m-auto w-32 h-32 rounded-full font-bold text-white text-xl z-10 shadow-lg"
             style={{
-              border: `solid 5px ${borderColor}`,
+              background: isSpinning
+                ? "linear-gradient(135deg, #666, #888)"
+                : "linear-gradient(135deg, #ff3cac, #784ba0)",
+              ...spinButtonStyle,
+            }}
+            onClick={initState ? spinWheel : resetWheel}
+            disabled={isSpinning || (!initState && !isFinished) || spinsAvailable <= 0}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isSpinning ? "Spinning..." : initState ? spinActionName : resetActionName}
+          </motion.button>
+
+          <motion.div
+            className="spin-wheel absolute inset-0"
+            style={{
+              border: `8px solid ${borderColor}`,
+              borderRadius: "50%",
               transform: initState
                 ? "rotate(0deg)"
-                : `rotate(-${720 + randIndex * (360 / items.length)}deg)`,
+                : `rotate(-${1080 + randIndex * (360 / items.length)}deg)`,
               transition: !initState
-                ? `transform ${Math.floor(spinTime / 1000)}s ease`
+                ? `transform ${Math.floor(spinTime / 1000)}s cubic-bezier(0.25, 0.1, 0.25, 1)`
                 : "none",
               ...spinWheelStyle,
             }}
@@ -219,65 +234,78 @@ export const SpinWheel = ({
             {items.map((item, index) => (
               <div
                 key={item.name}
-                className="option"
+                className="option absolute inset-0"
                 style={{
-                  backgroundColor: getColor(),
-                  transform: `rotate(${(360 / items.length) * index + 45}deg)`,
+                  background: getColor(),
+                  transform: `rotate(${(360 / items.length) * index}deg)`,
                   clipPath: `polygon(0 0, ${sidePercent}% 0, 100% 100%, 0 ${sidePercent}%)`,
+                  boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)",
                   ...spinItemStyle,
                 }}
               >
-                <span style={spinFontStyle}>{item.name}</span>
+                <span
+                  className="font-semibold text-white drop-shadow-md"
+                  style={{ ...spinFontStyle }}
+                >
+                  {item.name}
+                </span>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Reward Dialog */}
       <AnimatePresence>
         {showRewardDialog && currentReward && (
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/70 backdrop-blur-sm"
             onClick={() => setShowRewardDialog(false)}
           >
             <motion.div
-              initial={{ y: 50 }}
-              animate={{ y: 0 }}
-              className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl transform"
+              initial={{ scale: 0.8, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-md mx-4 shadow-2xl border border-gray-700/50"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-                  <span className="text-3xl">🎉</span>
-                </div>
-                <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-                  Congratulations!
+                <motion.div
+                  className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg"
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  <span className="text-4xl">🏆</span>
+                </motion.div>
+                <h2 className="text-3xl font-extrabold mb-3 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                  You Won!
                 </h2>
-                <p className="text-xl mb-4">You won {currentReward.name}!</p>
+                <p className="text-2xl mb-6 text-gray-200">{currentReward.name}</p>
                 {currentReward.type === "cashback" && (
-                  <div className="bg-green-50 p-4 rounded-lg mb-4">
-                    <p className="text-green-800">
-                      ₹{currentReward.amount} has been added to your e-Rupee balance
+                  <div className="bg-green-900/30 p-4 rounded-xl mb-6 border border-green-500/50">
+                    <p className="text-green-300">
+                      ₹{currentReward.amount} added to your e-Rupee balance
                     </p>
                   </div>
                 )}
                 {currentReward.type === "discount" && (
-                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                    <p className="text-blue-800">
-                      {currentReward.amount}% discount voucher added to your account
+                  <div className="bg-blue-900/30 p-4 rounded-xl mb-6 border border-blue-500/50">
+                    <p className="text-blue-300">
+                      {currentReward.amount}% discount voucher unlocked!
                     </p>
                   </div>
                 )}
-                <button
+                <motion.button
                   onClick={() => setShowRewardDialog(false)}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all duration-200"
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-8 py-3 rounded-full font-semibold shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Awesome!
-                </button>
+                  Claim Now
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
