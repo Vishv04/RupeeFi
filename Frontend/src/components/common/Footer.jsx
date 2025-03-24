@@ -47,9 +47,9 @@ const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <motion.div
                 whileHover={{ scale: 1.1 }}
-                className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center"
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
               >
-                <span className="text-2xl font-bold text-white">₹</span>
+                <img src="../../assets/logo-rupeefi.png" alt="RupeeFi Logo" className="w-full h-full object-contain" />
               </motion.div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                 RupeeFi
