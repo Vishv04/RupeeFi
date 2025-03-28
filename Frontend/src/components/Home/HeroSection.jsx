@@ -3,6 +3,18 @@ import { motion } from "framer-motion";
 import { ArrowRight, Wallet, BarChart, Shield, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import DashboardImg from "../../assets/Dashboard.png";
+import OneCoin from "../../assets/1coin.png";
+import fiftyPaisa from "../../assets/50paiseCoin.png";
+import twoRupee from "../../assets/2rupee.png";
+import fiveRupee from "../../assets/5rupee.png";
+import tenRupee from "../../assets/10rupee.png";
+import twentyRupee from "../../assets/20rupee.png";
+import fiftyRupee from "../../assets/50rupee.png";
+import hundredRupee from "../../assets/100rupee.png";
+import twoHundredRupee from "../../assets/200rupee.png";
+import fiveHundredRupee from "../../assets/500rupee.png";
+
+
 export default function Herosection() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -263,6 +275,22 @@ export default function Herosection() {
             </div>
           </div>
         </motion.div>
+
+        {/* <motion.div className="flex flex-row w-[90vw] mx-auto my-20 overflow-hidden justify-center ">
+          
+        <img className="h-[300px]" src={twoRupee} alt="" />
+        <img className="h-[300px]" src={fiveRupee} alt="" />
+        <img className="h-[300px]" src={tenRupee} alt="" />
+        <img className="h-[300px]" src={twentyRupee} alt="" />
+          <div>
+            <img className="h-[200px]" src={OneCoin} alt="" />
+            <img className="h-[200px]" src={fiftyPaisa} alt="" />
+          </div>
+          <img className="h-[300px]" src={fiftyRupee} alt="" />
+          <img className="h-[300px]" src={hundredRupee} alt="" />
+          <img className="h-[300px]" src={twoHundredRupee} alt="" />
+          <img className="h-[300px]" src={fiveHundredRupee} alt="" />
+        </motion.div> */}
 
         {/* Dashboard preview - larger and more prominent */}
         <motion.div
