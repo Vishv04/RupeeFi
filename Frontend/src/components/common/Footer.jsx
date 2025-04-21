@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import logoRupeeFi from '../../assets/logo-rupeefi.png';
 
 const Footer = () => {
   return (
@@ -49,7 +50,11 @@ const Footer = () => {
                 whileHover={{ scale: 1.1 }}
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
               >
-                <img src="../../assets/logo-rupeefi.png" alt="RupeeFi Logo" className="w-full h-full object-contain" />
+                {logoRupeeFi ? (
+                  <img src={logoRupeeFi} alt="RupeeFi" className="w-full h-full object-contain p-1" />
+                ) : (
+                  <div className="text-white font-bold text-2xl">₹</div>
+                )}
               </motion.div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                 RupeeFi

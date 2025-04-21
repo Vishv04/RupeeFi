@@ -48,7 +48,7 @@ export default function Herosection() {
       {/* Animated floating elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-80 h-80 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-60 right-10 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-80 h-80 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         
         {/* New floating elements */}
@@ -182,10 +182,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.1 }}
+              transition={{ duration: 0.7, delay: 1.1 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
                 className="h-[85px] sm:h-[180px] md:h-[220px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={twoRupee} 
                 alt="₹2 Coin" 
@@ -194,10 +197,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.2 }}
+              transition={{ duration: 0.7, delay: 1.2 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
                 className="h-[75px] sm:h-[160px] md:h-[200px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={fiveRupee} 
                 alt="₹5 Coin" 
@@ -206,10 +212,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.3 }}
+              transition={{ duration: 0.7, delay: 1.3 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.3 }}
                 className="h-[65px] sm:h-[140px] md:h-[180px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={tenRupee} 
                 alt="₹10 Coin" 
@@ -218,10 +227,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.4 }}
+              transition={{ duration: 0.7, delay: 1.4 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.4 }}
                 className="h-[55px] sm:h-[120px] md:h-[160px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={twentyRupee} 
                 alt="₹20 Note" 
@@ -232,23 +244,45 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.5 }}
+              transition={{ duration: 0.7, delay: 1.5 }}
               className="flex-shrink-0 flex flex-col items-center justify-center p-1 overflow-visible snap-center"
             >
-              <div className="transform transition-transform duration-300 hover:scale-110 origin-center">
-                <img className="h-[30px] sm:h-[60px] md:h-[80px] object-contain mb-1" src={OneCoin} alt="₹1 Coin" />
-                <img className="h-[30px] sm:h-[60px] md:h-[80px] object-contain mt-1" src={fiftyPaisa} alt="50 Paise Coin" />
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.5 }}
+                className="transform transition-transform duration-300 hover:scale-110 origin-center"
+              >
+                <motion.img 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 1.55 }}
+                  className="h-[30px] sm:h-[60px] md:h-[80px] object-contain mb-1" 
+                  src={OneCoin} 
+                  alt="₹1 Coin" 
+                />
+                <motion.img 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 1.6 }}
+                  className="h-[30px] sm:h-[60px] md:h-[80px] object-contain mt-1" 
+                  src={fiftyPaisa} 
+                  alt="50 Paise Coin" 
+                />
+              </motion.div>
             </motion.div>
             
             {/* Low to high */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.6 }}
+              transition={{ duration: 0.7, delay: 1.6 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.65 }}
                 className="h-[55px] sm:h-[120px] md:h-[160px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={fiftyRupee} 
                 alt="₹50 Note" 
@@ -257,10 +291,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.7 }}
+              transition={{ duration: 0.7, delay: 1.7 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.75 }}
                 className="h-[65px] sm:h-[140px] md:h-[180px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={hundredRupee} 
                 alt="₹100 Note" 
@@ -269,10 +306,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.8 }}
+              transition={{ duration: 0.7, delay: 1.8 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.85 }}
                 className="h-[75px] sm:h-[160px] md:h-[200px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={twoHundredRupee} 
                 alt="₹200 Note" 
@@ -281,10 +321,13 @@ export default function Herosection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.9 }}
+              transition={{ duration: 0.7, delay: 1.9 }}
               className="flex-shrink-0 p-1 overflow-visible snap-center"
             >
-              <img 
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 1.95 }}
                 className="h-[85px] sm:h-[180px] md:h-[220px] object-contain transform transition-transform duration-300 hover:scale-110 origin-center" 
                 src={fiveHundredRupee} 
                 alt="₹500 Note" 
