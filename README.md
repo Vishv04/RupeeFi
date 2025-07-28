@@ -10,6 +10,7 @@ RupeeFi is an innovative digital payment platform designed to convert UPI balanc
 - [Configuration](#-configuration)
 - [How to Get API Keys](#-how-to-get-api-keys)
 - [Guidelines](#-guidelines)
+- [Acknowledgement](#-acknowledgement)
 
 ## Features
 
@@ -173,7 +174,39 @@ Go to your forked repo → “Compare & pull request” → Describe your change
 
 ---
 
-Thank you for contributing to Rupeefi! 💖
+### Acknowledgement
+
+> This project was built during **Inginius Hackathon 6.0** at **Ahmedabad University**.
+
+### Team CodePirates
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/vishv04">
+        <img src="https://github.com/vishv04.png" width="100" style="border-radius: 8px;" />
+        <br />
+        <sub><b>Vishv Boda</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/datawizard1631">
+        <img src="https://github.com/datawizard1631.png" width="100" style="border-radius: 8px;" />
+        <br />
+        <sub><b>Deep Patel</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/codexknight-ai">
+        <img src="https://github.com/codexknight-ai.png" width="100" style="border-radius: 8px;" />
+        <br />
+        <sub><b>Subrat Jain</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+---
 
 ### ⚠️ Contribution Note
 
@@ -182,5 +215,8 @@ Thank you for contributing to Rupeefi! 💖
 > - Do **not** affect unrelated files, components, or styles.
 > - Properly tested and reviewed before raising a pull request.
 
-✅ **Always review your code before committing.** Irrelevant or auto-generated changes to other parts of the project will not be accepted.
+**Always review your code before committing.** Irrelevant or auto-generated changes to other parts of the project will not be accepted.
 
+---
+
+Thank you for contributing to Rupeefi! 💖
