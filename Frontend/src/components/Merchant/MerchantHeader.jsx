@@ -7,7 +7,6 @@ const MerchantHeader = ({
   toggleDarkMode, 
   activeTab, 
   setActiveTab,
-  bgColor,
   shadowColor,
   accentColor
 }) => {

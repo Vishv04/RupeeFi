@@ -1,16 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const SpinWheel = () => {
-  // ... existing state and hooks ...
+  const [rotation, setRotation] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinsAvailable, setSpinsAvailable] = useState(3);
 
-  const wheelStyle = {
-    position: 'relative',
-    width: '400px',
-    height: '400px',
-    margin: '40px auto',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+  const rewards = [
+    { value: '₹5' },
+    { value: '₹10' },
+    { value: '₹15' },
+    { value: '₹20' },
+    { value: '₹25' },
+    { value: '₹50' },
+    { value: '10% Off' },
+    { value: 'Try Again' },
+  ];
+
+  const handleSpin = () => {
+    if (isSpinning || spinsAvailable <= 0) return;
+    
+    setIsSpinning(true);
+    const spinAmount = Math.floor(Math.random() * 360) + 1440; // Random spin + multiple rotations
+    setRotation(prev => prev + spinAmount);
+    
+    setTimeout(() => {
+      setIsSpinning(false);
+      setSpinsAvailable(prev => prev - 1);
+    }, 4000);
   };
 
   const wheelSegmentStyle = (index) => {

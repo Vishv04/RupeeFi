@@ -50,7 +50,7 @@ const EmployeesView = ({ darkMode, cardShadow }) => {
       }
 
       // Validate that all amounts are positive numbers
-      const invalidAmounts = Object.entries(employeePayments).filter(([_, amount]) => 
+      const invalidAmounts = Object.entries(employeePayments).filter(([, amount]) => 
         isNaN(amount) || amount <= 0
       );
       if (invalidAmounts.length > 0) {
@@ -82,7 +82,7 @@ const EmployeesView = ({ darkMode, cardShadow }) => {
         try {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || 'Failed to process payments';
-        } catch (e) {
+        } catch {
           errorMessage = errorText || 'Failed to process payments';
         }
         throw new Error(errorMessage);

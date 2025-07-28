@@ -1,26 +1,17 @@
 # RupeeFi - Digital Payment Platform 💸
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://semver.org)
-[![React](https://img.shields.io/badge/react-%5E18.0.0-blue.svg)](https://reactjs.org/)
-[![Node.js](https://img.shields.io/badge/node-%5E18.0.0-green.svg)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/mongodb-%5E6.0.0-green.svg)](https://www.mongodb.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+RupeeFi is an innovative digital payment platform designed to convert UPI balance into e-Rupee balance, aiming to promote the adoption of e-Rupee in everyday transactions. Built with modern technologies and secure practices, the platform balances functionality, fun, and finance.
 
-RupeeFi is a comprehensive digital payment platform that integrates e-Rupee transactions with gamified rewards, merchant services, and AI-powered support.
-
-![RupeeFi Platform](./assets/platform-demo.gif)
-
-## 📑 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
-- [System Architecture](#-system-architecture)
-- [Installation](#-installation)
 - [Project Structure](#-project-structure)
-- [Configuration](#%EF%B8%8F-configuration)
-- [API Documentation](#-api-documentation)
-- [Components](#-components)
+- [Project Setup](#-project-setup)
+- [Configuration](#-configuration)
+- [How to Get API Keys](#-how-to-get-api-keys)
+- [Guidelines](#-guidelines)
 
-## ✨ Features
+## Features
 
 ### User Features
 - **e-Rupee Integration**: Seamless digital currency transactions
@@ -46,158 +37,150 @@ RupeeFi is a comprehensive digital payment platform that integrates e-Rupee tran
 - **UPI PIN Verification**: Secure transactions
 - **Rate Limiting**: DDoS protection
 
-## 🏗 System Architecture
-- **Frontend (React + Vite)**  
-  - **User Interface**  
-    - Authentication  
-    - Dashboard  
-    - Payments  
-    - Rewards  
-    - Profile  
-  - **Merchant Interface**  
-    - Dashboard  
-    - Analytics  
-    - Employees  
-    - Settings  
-
-- **Backend (Node.js + Express)**  
-  - API Routes  
-  - Controllers  
-  - Models  
-  - Middleware  
-  - Services  
-
-
-## 🚀 Installation
-
-### Prerequisites
-- Node.js (v18+)
-- MongoDB
-- npm/yarn
-
-### Frontend Setup
-cd Frontend
-npm install
-npm run dev
-
-### Backend Setup
-cd Backend
-npm install
-npm run dev
-
-
-## 📁 Project Structure
+## Project Structure
 - **RupeeFi/**
   - **Frontend/**
     - **src/**
-      - **components/**
-        - **auth/**
-        - **chatbot/**
-        - **common/**
-        - **dashboard/**
-        - **merchant/**
-        - **rewards/**
-      - **services/**
       - **assets/**
+      - **components/**
+      - **lib/**
+      - **services/**
       - **App.jsx**
+    - **.env**  
     - **index.html**
   - **Backend/**
-    - **routes/**
+    - **config/**
     - **controllers/**
-    - **models/**
     - **middleware/**
-    - **app.js**
+    - **models/**
+    - **routes/**
+    - **utils/**
+    - **.env**
+    - **index.js**
 
+## Project Setup
 
-## 📡 API Documentation
+### Frontend Setup
 
-### **Authentication Endpoints**  
-- **POST** `/api/auth/google-login`  
-- **POST** `/api/auth/logout`  
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
----
+- The frontend will run on: [http://localhost:5173](http://localhost:5173)
 
-### **User Endpoints**  
-- **GET** `/api/user/profile`  
-- **PUT** `/api/user/profile`  
-- **DELETE** `/api/user/profile`  
+### Backend Setup
 
----
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-### **Payment Endpoints**  
-- **POST** `/api/payment/phonepe`  
-- **POST** `/api/payment/link-account`  
-- **POST** `/api/transfer/verify-upi-pin`  
-- **POST** `/api/transfer/transfer-to-erupee`  
-
----
-
-### **Merchant Endpoints**  
-- **POST** `/api/merchant/register`  
-- **POST** `/api/merchant/login`  
-- **GET** `/api/merchant/dashboard-stats`  
-- **PUT** `/api/merchant/payment-methods`  
+- The backend server will run on: [http://localhost:3000](http://localhost:3000)
 
 ---
 
-### **Rewards Endpoints**  
-- **GET** `/api/rewards/spins-available`  
-- **POST** `/api/rewards/spin`  
-- **GET** `/api/rewards/scratch-cards`  
-- **POST** `/api/rewards/scratch`  
+## Configuration
 
+### Frontend (`frontend/.env`)
 
-## 🎨 Components
+```
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
+VITE_GEMINI_API_KEY=your_gemini_api_key
+```
 
-### Core Components
-- **Authentication**: Google OAuth integration
-- **Dashboard**: Transaction overview and analytics
-- **Payments**: UPI and e-Rupee transactions
-- **Rewards**: Spin wheel and scratch cards
-- **Chatbot**: AI-powered support system
-- **Merchant Dashboard**: Business management interface
+### Backend (`backend/.env`)
 
-### Shared Components
-- **Navbar**: Navigation and user menu
-- **Loading States**: Unified loading indicators
-- **Error Boundaries**: Error handling components
-- **Modal Windows**: Reusable modal system
-- **Form Components**: Standardized form elements
+```
+PORT=3000
+MONGODB_URI=your_mongodb_uri
 
-## 🤝 Contributing
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=30d
 
-1. Fork the repository
-2. Create your feature branch
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. Commit your changes
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-4. Push to the branch
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. Open a Pull Request
-
-
-## Acknowledgments
-
-- Google OAuth for authentication
-- RazorPay for payment processing
-- Google Gemini AI for chatbot
-- MongoDB for database
-- Express.js for backend
-- React for frontend
-- Tailwind CSS for styling
-- Framer Motion for animations
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+```
 
 ---
 
-## 🔍 Support
+## How to Get API Keys
 
-For support:
-- Open an issue on GitHub
-- Contact the RupeeFi team
+### 1. Google Client ID
+- Go to [Google Cloud Console](https://console.cloud.google.com/)
+- Create a project
+- Go to “OAuth consent screen” → configure
+- Go to “Credentials” → “Create credentials” → OAuth Client ID
+- Choose Web App and add `http://localhost:5173` to redirect URIs
+- Copy the **Client ID**
+
+### 2. Razorpay Key
+- Go to [Razorpay Dashboard](https://dashboard.razorpay.com/)
+- Sign in → Settings → API Keys → Generate Key
+- Copy **Key ID** and **Key Secret**
+
+### 3. Gemini API Key (Google AI)
+- Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+- Sign in and generate your API key
+
+### 4. MongoDB URI
+- Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- Create a project & cluster
+- Go to “Database Access” → Create user
+- Go to “Network Access” → Allow access from anywhere
+- Go to “Clusters” → Connect → Choose “Connect your application”
+- Copy the **connection string**
+
 ---
+
+## Guidelines 
+
+### 1. Fork the Repository
+Create your own copy of the project by clicking the **Fork** button.
+
+### 2. Clone Your Fork
+```bash
+git clone https://github.com/your-username/rupeefi.git
+cd rupeefi
+```
+
+### 3. Create a Feature Branch
+```bash
+git checkout -b feature/YourFeatureName
+```
+
+### 4. Make Your Changes
+Work on the frontend (`/frontend`) or backend (`/backend`) as needed.
+
+### 5. Build check
+Make sure your code follows production build setup:
+```bash
+npm run build
+```
+
+### 6. Commit and Push
+```bash
+git add .
+git commit -m "Add: Short description of your feature"
+git push origin feature/YourFeatureName
+```
+
+### 7. Open a Pull Request
+Go to your forked repo → “Compare & pull request” → Describe your change & add images in needed → Submit PR.
+
+---
+
+Thank you for contributing to Rupeefi! 💖
+
+### ⚠️ Contribution Note
+
+> **Important:** If you are using any AI-assisted tools (like GitHub Copilot, ChatGPT, etc.) while writing your code, please ensure that the changes are:
+> - Relevant **only** to the feature or bug you are working on.
+> - Do **not** affect unrelated files, components, or styles.
+> - Properly tested and reviewed before raising a pull request.
+
+✅ **Always review your code before committing.** Irrelevant or auto-generated changes to other parts of the project will not be accepted.
+
