@@ -19,7 +19,7 @@ import ERupeeWallet from './components/wallet/ERupeeWallet';
 import BlockchainViewer from './components/BlockchainViewer';
 import Transfer from './components/Transfer';
 import RupeeFiBlog from './components/blog/RupeeFiBlog';
-import ScrollToTop from './scrollTotop';
+import ScrollToTop from './components/scrollTotop';
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
