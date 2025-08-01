@@ -19,6 +19,7 @@ import ERupeeWallet from './components/wallet/ERupeeWallet';
 import BlockchainViewer from './components/BlockchainViewer';
 import Transfer from './components/Transfer';
 import RupeeFiBlog from './components/blog/RupeeFiBlog';
+import ScrollToTop from './components/scrollTotop';
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
@@ -69,6 +70,7 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <NavbarWrapper isAuthenticated={isAuthenticated} onLogout={handleLogout} />
         <main className="flex-grow">
+        <ScrollToTop />
           <Routes>
             <Route 
               path="/home" 
