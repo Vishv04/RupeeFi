@@ -169,19 +169,19 @@ function Navbar({ isAuthenticated, onLogout }) {
                 
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-sm shadow-xl rounded-lg overflow-hidden">
-                    <Link to="/profile" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                    <Link to="/profile" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200" onClick={() => setIsProfileDropdownOpen(false)}>
                       <div className="flex items-center gap-2">
                         <FaUser className="text-indigo-600 w-4 h-4" />
                         <span>Profile</span>
                       </div>
                     </Link>
-                    <Link to="/rewards" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                    <Link to="/rewards" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200" onClick={() => setIsProfileDropdownOpen(false)}>
                       <div className="flex items-center gap-2">
                         <FaGift className="text-indigo-600 w-4 h-4" />
                         <span> Rewards</span>
                       </div>
                     </Link>
-                    <Link to="/blockchain" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                    <Link to="/blockchain" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200" onClick={() => setIsProfileDropdownOpen(false)}>
                       ⛓️ Blockchain
                     </Link>
                     <button
