@@ -20,6 +20,7 @@ import BlockchainViewer from './components/BlockchainViewer';
 import Transfer from './components/Transfer';
 import RupeeFiBlog from './components/blog/RupeeFiBlog';
 import ScrollToTop from './components/scrollTotop';
+import TopBar from './components/TopBar.jsx';
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
@@ -146,6 +147,7 @@ function App() {
       </Routes>
         </main>
         <Footer />
+        <TopBar />
         <ChatButton />
       </div>
     </Router>
