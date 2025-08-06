@@ -21,7 +21,6 @@ export const SpinWheel = ({
   borderColor = "#444",
   spinActionName = "Spin Now",
   resetActionName = "Reset",
-  size = 450,
   spinTime = 4000,
   onResult,
   onFinishSpin,
@@ -35,6 +34,7 @@ export const SpinWheel = ({
 }) => {
   const getColor = createColorGenerator(itemColors);
 
+  const [wheelSize, setWheelSize] = useState(Math.min(450, Math.max(250, window.innerWidth * 0.8)));
   const [initState, setInitState] = useState(true);
   const [randIndex, setRandIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(true);
@@ -44,6 +44,14 @@ export const SpinWheel = ({
   const [error, setError] = useState(null);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [currentReward, setCurrentReward] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWheelSize(Math.min(450, Math.max(250, window.innerWidth * 0.8)));
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,11 +155,11 @@ export const SpinWheel = ({
 
   const sidePercent =
     items.length > 0
-      ? ((size - Math.tan((45 - 360 / items.length / 2) * (Math.PI / 180)) * size) / size) * 100
+      ? ((wheelSize - Math.tan((45 - 360 / items.length / 2) * (Math.PI / 180)) * wheelSize) / wheelSize) * 100
       : 0;
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen">
+    <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen overflow-x-hidden">
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -167,7 +175,7 @@ export const SpinWheel = ({
         animate={{ opacity: 1 }}
         className="text-center mb-6"
       >
-        <p className="text-2xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+        <p className="text-xl sm:text-2xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
           Spins Available: {spinsAvailable}
         </p>
       </motion.div>
@@ -177,7 +185,6 @@ export const SpinWheel = ({
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 300 }}
       >
-        {/* 3D Pointer */}
         <motion.div
           className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-20 rotate-180"
           animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
@@ -190,8 +197,8 @@ export const SpinWheel = ({
         <motion.div
           className="spin-container relative"
           style={{
-            width: size,
-            height: size,
+            width: wheelSize,
+            height: wheelSize,
             borderRadius: "50%",
             background: "linear-gradient(135deg, #1e1e1e, #333)",
             boxShadow: "0 15px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.1)",
@@ -202,7 +209,7 @@ export const SpinWheel = ({
           animate={{ rotateX: isSpinning ? 10 : 0, rotateY: isSpinning ? 10 : 0 }}
         >
           <motion.button
-            className="absolute inset-0 m-auto w-32 h-32 rounded-full font-bold text-white text-xl z-10 shadow-lg"
+            className="absolute inset-0 m-auto w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full font-bold text-white text-sm sm:text-lg md:text-xl z-10 shadow-lg"
             style={{
               background: isSpinning
                 ? "linear-gradient(135deg, #666, #888)"
@@ -244,7 +251,7 @@ export const SpinWheel = ({
                 }}
               >
                 <span
-                  className="font-semibold text-white drop-shadow-md"
+                  className="text-xs sm:text-sm md:text-base font-semibold text-white drop-shadow-md"
                   style={{ ...spinFontStyle }}
                 >
                   {item.name}
@@ -255,44 +262,43 @@ export const SpinWheel = ({
         </motion.div>
       </motion.div>
 
-      {/* Reward Dialog */}
       <AnimatePresence>
         {showRewardDialog && currentReward && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/70 backdrop-blur-sm px-4"
             onClick={() => setShowRewardDialog(false)}
           >
             <motion.div
               initial={{ scale: 0.8, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-md mx-4 shadow-2xl border border-gray-700/50"
+              className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-4 sm:p-6 md:p-8 w-full max-w-md shadow-2xl border border-gray-700/50"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
                 <motion.div
-                  className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg"
+                  className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg"
                   animate={{ rotate: [0, 360] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 >
-                  <span className="text-4xl">🏆</span>
+                  <span className="text-3xl sm:text-4xl">🏆</span>
                 </motion.div>
-                <h2 className="text-3xl font-extrabold mb-3 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2 sm:mb-3 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                   You Won!
                 </h2>
-                <p className="text-2xl mb-6 text-gray-200">{currentReward.name}</p>
+                <p className="text-lg sm:text-xl mb-4 sm:mb-6 text-gray-200">{currentReward.name}</p>
                 {currentReward.type === "cashback" && (
-                  <div className="bg-green-900/30 p-4 rounded-xl mb-6 border border-green-500/50">
+                  <div className="bg-green-900/30 p-4 rounded-xl mb-4 sm:mb-6 border border-green-500/50">
                     <p className="text-green-300">
                       ₹{currentReward.amount} added to your e-Rupee balance
                     </p>
                   </div>
                 )}
                 {currentReward.type === "discount" && (
-                  <div className="bg-blue-900/30 p-4 rounded-xl mb-6 border border-blue-500/50">
+                  <div className="bg-blue-900/30 p-4 rounded-xl mb-4 sm:mb-6 border border-blue-500/50">
                     <p className="text-blue-300">
                       {currentReward.amount}% discount voucher unlocked!
                     </p>
@@ -300,7 +306,7 @@ export const SpinWheel = ({
                 )}
                 <motion.button
                   onClick={() => setShowRewardDialog(false)}
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-8 py-3 rounded-full font-semibold shadow-md"
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 sm:px-8 py-2 sm:py-3 rounded-full font-semibold shadow-md"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

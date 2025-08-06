@@ -75,7 +75,7 @@ const PaymentStreak = () => {
             <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
               {streakInfo.currentStreak}
             </span>
-            <span className="text-sm text-gray-200">day streak</span>
+            <span className="text-sm text-gray-400">day streak</span>
           </div>
 
           {streakInfo.daysUntilReward > 0 && (
