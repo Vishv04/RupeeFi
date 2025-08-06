@@ -381,19 +381,29 @@ export default function Herosection() {
             { icon: <Shield className="text-[#4552e3]" />, title: "Security", description: "Advanced protection for your financial data" },
             { icon: <CreditCard className="text-[#4552e3]" />, title: "Credit Tools", description: "Build and optimize your credit score" },
           ].map((feature, index) => (
-            <motion.div 
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 1.4 + (index * 0.1) }}
-              className="group flex flex-col items-center p-6 rounded-xl bg-white border border-[#888feb]/10 hover:border-[#4552e3]/20 hover:shadow-lg hover:shadow-[#888feb]/5 transition-all duration-300"
-            >
-              <div className="mb-4 p-3 rounded-full bg-[#888feb]/5 group-hover:bg-[#4552e3]/10 transition-colors duration-300">
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-semibold text-[#0d1152] mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-600 text-center">{feature.description}</p>
-            </motion.div>
+         <motion.div 
+  key={index}
+  whileHover={{
+    y: -10,
+    scale: 1.035,
+    transition: {
+      duration: 0.25,
+      ease: "easeOut"
+    }
+  }}
+  whileTap={{ scale: 1.02 }}
+  className="group flex flex-col items-center p-6 rounded-xl bg-white border border-[#888feb]/10 shadow-sm cursor-pointer"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, delay: 1.4 + index * 0.1 }}
+>
+  <div className="mb-4 p-3 rounded-full bg-[#888feb]/5 group-hover:bg-[#4552e3]/10 transition-colors duration-300">
+    {feature.icon}
+  </div>
+  <h3 className="text-lg font-semibold text-[#0d1152] mb-2">{feature.title}</h3>
+  <p className="text-sm text-gray-600 text-center">{feature.description}</p>
+</motion.div>
+
           ))}
         </motion.div>
 
