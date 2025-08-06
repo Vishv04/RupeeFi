@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGithub, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import logoRupeeFi from '../../assets/logo-rupeefi.png';
 
 const Footer = () => {
@@ -36,8 +35,8 @@ const Footer = () => {
         />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-10 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-40">
           {/* Logo and Brand Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +44,7 @@ const Footer = () => {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-center sm:items-start"
           >
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center space-x-4 mb-4">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
@@ -61,7 +60,7 @@ const Footer = () => {
               </h2>
             </div>
             <p className="text-gray-300 text-sm text-center sm:text-left">
-              Empowering India's digital financial future with secure and innovative solutions.
+            Promoting e-Rupee adoption through UPI conversion and gamified payments.
             </p>
           </motion.div>
 
@@ -92,52 +91,11 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>Ahmedabad University</li>
               <li>Gujarat, India</li>
+              <li>info.rupeefi@gmail.com</li>
             </ul>
           </motion.div>
 
-          {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center sm:text-left"
-          >
-            <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
-            <div className="flex justify-center sm:justify-start space-x-4">
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                className="text-2xl hover:text-purple-400 transition-colors"
-              >
-                <FaGithub />
-              </motion.a>
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                className="text-2xl hover:text-purple-400 transition-colors"
-              >
-                <FaTwitter />
-              </motion.a>
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                className="text-2xl hover:text-purple-400 transition-colors"
-              >
-                <FaLinkedin />
-              </motion.a>
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                className="text-2xl hover:text-purple-400 transition-colors"
-              >
-                <FaInstagram />
-              </motion.a>
-            </div>
-          </motion.div>
+         
         </div>
 
         {/* Copyright */}
@@ -147,7 +105,8 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-8 pt-8 border-t border-gray-700 text-center"
         >
-          <p className="text-sm text-gray-400">CodePirates, Vishv Boda, Deep Patel, Subrat Jain</p>
+          <p className="text-sm text-gray-400">© 2025 RupeeFi - All rights reserved.</p>
+          
         </motion.div>
       </div>
     </footer>
