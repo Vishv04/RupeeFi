@@ -4,13 +4,13 @@ RupeeFi is an innovative digital payment platform designed to convert UPI balanc
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Project Structure](#-project-structure)
-- [Project Setup](#-project-setup)
-- [Configuration](#-configuration)
-- [How to Get API Keys](#-how-to-get-api-keys)
-- [Guidelines](#-guidelines)
-- [Acknowledgement](#-acknowledgement)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Project Setup](#project-setup)
+- [Configuration](#configuration)
+- [How to Get API Keys](#how-to-get-api-keys)
+- [Guidelines](#guidelines)
+- [Acknowledgement](#acknowledgement)
 
 ## Features
 
