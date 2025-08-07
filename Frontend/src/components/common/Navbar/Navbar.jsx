@@ -151,8 +151,8 @@ function Navbar({ isAuthenticated, onLogout }) {
                 <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
               </Link>
             )}
-            <Link to="/blog" className="text-gray-700 hover:text-black transition-colors duration-300 relative group">
-              Blog
+            <Link to="/about" className="text-gray-700 hover:text-black transition-colors duration-300 relative group">
+              About
               <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
             </Link>
             

@@ -18,8 +18,8 @@ import UPIWallet from './components/wallet/UPIWallet';
 import ERupeeWallet from './components/wallet/ERupeeWallet';
 import BlockchainViewer from './components/BlockchainViewer';
 import Transfer from './components/Transfer';
-import RupeeFiBlog from './components/blog/RupeeFiBlog';
 import ScrollToTop from './components/scrollTotop';
+import RupeeFiabout from './components/about/RupeeFiabout';
 // NavbarWrapper component to conditionally render navbar
 const NavbarWrapper = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
@@ -140,8 +140,8 @@ function App() {
           element={isAuthenticated ? <ERupeeWallet /> : <Navigate to="/login" />} 
         />
         <Route 
-          path="/blog" 
-          element={<RupeeFiBlog />} 
+          path="/about" 
+          element={<RupeeFiabout />} 
         />
       </Routes>
         </main>
