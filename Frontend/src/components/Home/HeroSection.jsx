@@ -363,9 +363,10 @@ export default function Herosection() {
             <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
           
-          <Link to="/about" className="group flex items-center justify-center w-64 transform rounded-full bg-white px-6 py-3 font-medium text-[#4552e3] border-2 border-[#4552e3]/20 transition-all duration-300 hover:border-[#4552e3] hover:shadow-lg hover:shadow-[#4552e3]/10 hover:-translate-y-1">
-            Learn More
-          </Link>
+          <Link to="/blog" className="group flex items-center justify-center w-64 transform rounded-full bg-white px-6 py-3 font-medium text-[#4552e3] border-2 border-[#4552e3]/20 transition-all duration-300 hover:border-[#4552e3] hover:shadow-lg hover:shadow-[#4552e3]/10 hover:-translate-y-1">
+  Learn More
+</Link>
+
         </motion.div>
 
         {/* Feature highlights section - comes after the main hero content */}
